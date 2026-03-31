@@ -1,0 +1,22 @@
+{
+  "name": "cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.12.1",
+  "dependencies": {
+    "@clack/prompts": "^1.1.0",
+    "clipboardy": "^5.3.1",
+    "picocolors": "^1.1.1"
+  },
+  "type": "module",
+  "bin": {
+    "prompts": "./index.js"
+  }
+}
