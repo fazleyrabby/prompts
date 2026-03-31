@@ -91,3 +91,5 @@ Add any optional usage tips here (this section is rendered under the prompt bloc
 - [ ] **Phase 2**: Filtering (Category grouping, tag filtering via URL parameters)
 - [ ] **Phase 3**: Client-side Search (using Fuse.js)
 - [ ] **Phase 4**: Scaling (Pagination, RSS feed, etc.)
+
+*Updated: Tue Mar 31 23:28:30 +06 2026*
