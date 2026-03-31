@@ -260,7 +260,7 @@ const relatedPrompts = allPrompts
 </script>
 
 <!-- Interactive Variables Client Script -->
-<script define:vars={{ initialPromptText: promptText, variables }}>
+<script is:inline define:vars={{ initialPromptText: promptText, variables }}>
   function initInteractiveVars() {
     if (!variables || variables.length === 0) return;
     

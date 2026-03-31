@@ -76,8 +76,8 @@ const { promptText, fullWidth = false } = Astro.props;
         try {
           await navigator.clipboard.writeText(promptText);
           newBtn.classList.add('copied');
-          if (typeof window.showToast === 'function') {
-            window.showToast('Prompt copied to clipboard!', 'success');
+          if (typeof (window as any).showToast === 'function') {
+            (window as any).showToast('Prompt copied to clipboard!', 'success');
           }
           setTimeout(() => {
             newBtn.classList.remove('copied');

@@ -1,0 +1,240 @@
+---
+import { getCollection } from 'astro:content';
+
+const allPrompts = await getCollection('prompts');
+const promptsData = allPrompts.map(p => ({
+  title: p.data.title,
+  description: p.data.description,
+  category: p.data.category,
+  slug: p.slug
+}));
+---
+
+<div id="cmd-palette" class="fixed inset-0 z-50 flex items-start justify-center pt-[10vh] px-4 opacity-0 pointer-events-none transition-opacity duration-200 ease-out" role="dialog" aria-modal="true">
+  <!-- Backdrop -->
+  <div id="cmd-backdrop" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+
+  <!-- Modal -->
+  <div class="relative w-full max-w-2xl bg-[#0d121c] border border-[var(--border)] rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-200 ease-out flex flex-col max-h-[80vh]" id="cmd-modal">
+    
+    <!-- Search Input -->
+    <div class="relative flex items-center px-4 border-b border-[var(--border)] shrink-0">
+      <svg class="h-5 w-5 text-[var(--text-secondary)]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+      <input 
+        type="text" 
+        id="cmd-input" 
+        class="w-full bg-transparent border-0 text-[var(--text-primary)] px-4 py-4 text-lg focus:ring-0 focus:outline-none placeholder:text-[var(--text-secondary)]/50" 
+        placeholder="Search prompts, categories... (e.g. 'React', 'Auth')"
+        autocomplete="off"
+      />
+      <div class="hidden sm:flex items-center gap-1 absolute right-4">
+        <kbd class="px-2 py-1 bg-[var(--surface)] border border-[var(--border)] rounded flex items-center justify-center text-[10px] font-mono text-[var(--text-secondary)]">ESC</kbd>
+      </div>
+    </div>
+
+    <!-- Results List -->
+    <div class="overflow-y-auto flex-grow h-full" id="cmd-results-container">
+      <div class="p-2 space-y-1" id="cmd-results">
+        <!-- Results injected here via JS -->
+      </div>
+      
+      <!-- Empty State -->
+      <div id="cmd-empty" class="hidden py-12 text-center">
+        <svg class="h-8 w-8 text-[var(--text-secondary)]/50 mx-auto mx-auto mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <p class="text-[var(--text-secondary)] text-sm">No prompts found.</p>
+      </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="px-4 py-2 border-t border-[var(--border)] bg-[var(--surface)]/50 shrink-0 flex items-center gap-4 text-xs font-mono text-[var(--text-secondary)] flex-wrap hidden sm:flex">
+      <div class="flex items-center gap-1.5 flex-wrap">
+        <span class="flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-[var(--border)] rounded inline-block leading-none">↑</kbd><kbd class="px-1.5 py-0.5 bg-[var(--border)] rounded inline-block leading-none">↓</kbd> to navigate</span>
+        <span class="opacity-50 mx-1">|</span>
+        <span class="flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-[var(--border)] rounded inline-block leading-none">↵</kbd> to open</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline define:vars={{ promptsData }}>
+  let isOpen = false;
+  let selectedIndex = 0;
+  let currentResults = [...promptsData];
+
+  const palette = document.getElementById('cmd-palette');
+  const modal = document.getElementById('cmd-modal');
+  const backdrop = document.getElementById('cmd-backdrop');
+  const input = document.getElementById('cmd-input');
+  const resultsContainer = document.getElementById('cmd-results');
+  const emptyState = document.getElementById('cmd-empty');
+
+  function openPalette() {
+    isOpen = true;
+    palette.classList.remove('pointer-events-none', 'opacity-0');
+    modal.classList.remove('scale-95');
+    modal.classList.add('scale-100');
+    input.value = '';
+    input.focus();
+    renderResults(promptsData);
+  }
+
+  function closePalette() {
+    isOpen = false;
+    palette.classList.add('pointer-events-none', 'opacity-0');
+    modal.classList.remove('scale-100');
+    modal.classList.add('scale-95');
+    input.blur();
+  }
+
+  function togglePalette() {
+    isOpen ? closePalette() : openPalette();
+  }
+
+  function handleKeydown(e) {
+    // CMD+K or CTRL+K
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      togglePalette();
+    }
+    
+    // Fallback shortcut: / opens palette if not in an input
+    if (e.key === '/' && !isOpen && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+      openPalette();
+    }
+
+    if (!isOpen) return;
+
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      closePalette();
+    }
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      selectedIndex = Math.min(selectedIndex + 1, currentResults.length - 1);
+      updateSelection();
+    }
+
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      selectedIndex = Math.max(selectedIndex - 1, 0);
+      updateSelection();
+    }
+
+    if (e.key === 'Enter' && currentResults.length > 0) {
+      e.preventDefault();
+      window.location.href = `/prompt/${currentResults[selectedIndex].slug}`;
+    }
+  }
+
+  function updateSelection() {
+    const items = resultsContainer.querySelectorAll('.cmd-item');
+    items.forEach((item, index) => {
+      if (index === selectedIndex) {
+        item.classList.add('bg-[var(--accent-start)]/10', 'ring-1', 'ring-[var(--accent-start)]/30');
+        item.classList.remove('hover:bg-[var(--surface-hover)]');
+        item.scrollIntoView({ block: 'nearest' });
+      } else {
+        item.classList.remove('bg-[var(--accent-start)]/10', 'ring-1', 'ring-[var(--accent-start)]/30');
+        item.classList.add('hover:bg-[var(--surface-hover)]');
+      }
+    });
+  }
+
+  function renderResults(results) {
+    currentResults = results;
+    selectedIndex = 0;
+
+    if (results.length === 0) {
+      resultsContainer.innerHTML = '';
+      emptyState.classList.remove('hidden');
+      return;
+    }
+
+    emptyState.classList.add('hidden');
+    resultsContainer.innerHTML = results.map((p, i) => `
+      <a 
+        href="/prompt/${p.slug}"
+        class="cmd-item flex items-center justify-between p-3 rounded-xl transition-all ${i === 0 ? 'bg-[var(--accent-start)]/10 ring-1 ring-[var(--accent-start)]/30' : 'hover:bg-[var(--surface-hover)]'}"
+        data-index="${i}"
+      >
+        <div class="min-w-0 pr-4">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="inline-block px-1.5 text-[9px] uppercase tracking-wider font-mono rounded bg-[var(--surface)] text-[var(--accent-start)] border border-[var(--accent-start)]/20">${p.category}</span>
+            <span class="font-medium text-[var(--text-primary)] truncate">${p.title}</span>
+          </div>
+          <p class="text-[13px] text-[var(--text-secondary)] truncate font-body">${p.description}</p>
+        </div>
+        <div class="shrink-0 text-[var(--text-secondary)] opacity-0 -translate-x-2 transition-all group-hover:opacity-100 group-hover:translate-x-0 hidden sm:block">
+          <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </a>
+    `).join('');
+
+    // Add mouseenter events for items so hover syncs with selectedIndex
+    const items = resultsContainer.querySelectorAll('.cmd-item');
+    items.forEach((item) => {
+      item.addEventListener('mouseenter', () => {
+        selectedIndex = parseInt(item.getAttribute('data-index'));
+        updateSelection();
+      });
+      // Ensure the arrow icon appears when item is actively selected via keyboard
+      if(parseInt(item.getAttribute('data-index')) === selectedIndex) {
+         const icon = item.querySelector('div.shrink-0');
+         if(icon) {
+            icon.classList.remove('opacity-0', '-translate-x-2');
+            icon.classList.add('opacity-100', 'translate-x-0', 'text-[var(--accent-start)]');
+         }
+      }
+    });
+
+    updateSelection();
+  }
+
+  function handleSearch(e) {
+    const query = e.target.value.toLowerCase();
+    if (!query) {
+      renderResults(promptsData);
+      return;
+    }
+
+    const filtered = promptsData.filter(p => 
+      p.title.toLowerCase().includes(query) || 
+      p.description.toLowerCase().includes(query) || 
+      p.category.toLowerCase().includes(query)
+    );
+    renderResults(filtered);
+  }
+
+  document.addEventListener('keydown', handleKeydown);
+  backdrop.addEventListener('click', closePalette);
+  input.addEventListener('input', handleSearch);
+</script>
+
+<style>
+  /* Fix scrollbar styling for palette specifically */
+  #cmd-results-container::-webkit-scrollbar {
+    width: 6px;
+  }
+  #cmd-results-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  #cmd-results-container::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 10px;
+  }
+  
+  /* Ensure selected items show arrow icon */
+  .cmd-item.ring-1 div.shrink-0 {
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+    color: var(--accent-start);
+  }
+</style>

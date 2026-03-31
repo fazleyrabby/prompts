@@ -2,6 +2,7 @@
 const { title, description } = Astro.props;
 import '../styles/global.css';
 import Toast from '../components/Toast.astro';
+import CommandPalette from '../components/CommandPalette.astro';
 ---
 
 <!doctype html>
@@ -31,6 +32,7 @@ import Toast from '../components/Toast.astro';
       </div>
     </footer>
     <Toast />
+    <CommandPalette />
   </body>
 </html>
 
