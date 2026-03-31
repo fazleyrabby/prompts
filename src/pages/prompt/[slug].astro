@@ -71,8 +71,17 @@ const relatedPrompts = allPrompts
           </p>
         </div>
         
-        <!-- Copy Button (Desktop) -->
-        <div class="relative z-10 hidden sm:block shrink-0 mt-8">
+        <!-- Action Buttons (Desktop) -->
+        <div class="relative z-10 hidden sm:flex items-center gap-2 shrink-0 mt-8">
+          <button 
+            id="shareBtn"
+            class="inline-flex items-center gap-1.5 px-2.5 py-1.5 h-8 rounded-md font-mono text-sm font-medium border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] transition-all"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+            </svg>
+            Share
+          </button>
           <CopyButton promptText={promptText} fullWidth={false} />
         </div>
       </div>
@@ -200,3 +209,19 @@ const relatedPrompts = allPrompts
   .markdown-content :global(ul) { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
   .markdown-content :global(p) { margin-bottom: 1rem; }
 </style>
+
+<script>
+  const shareBtn = document.getElementById('shareBtn');
+  shareBtn?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      if (typeof (window as any).showToast === 'function') {
+        (window as any).showToast('Link copied to clipboard!', 'success');
+      }
+    } catch {
+      if (typeof (window as any).showToast === 'function') {
+        (window as any).showToast('Failed to copy link', 'warning');
+      }
+    }
+  });
+</script>

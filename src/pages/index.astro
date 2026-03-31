@@ -32,6 +32,7 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
             placeholder="Search prompts..." 
             class="bg-transparent border-none focus:outline-none w-full text-[var(--text-primary)] placeholder-[var(--text-secondary)] text-sm"
           />
+          <kbd class="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono text-[var(--text-secondary)] border border-[var(--border)] bg-[var(--bg)] ml-2 shrink-0">/</kbd>
         </div>
       </div>
 
@@ -492,4 +493,43 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
   }
 
   filterPrompts();
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    const target = e.target as HTMLElement;
+    const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA';
+
+    // "/" to focus search (when not typing)
+    if (e.key === '/' && !isInput) {
+      e.preventDefault();
+      searchInput?.focus();
+    }
+
+    // Escape to clear search and reset
+    if (e.key === 'Escape') {
+      if (searchInput && searchInput.value) {
+        searchInput.value = '';
+        searchQuery = '';
+        filterPrompts();
+      }
+      searchInput?.blur();
+    }
+
+    // Left/Right arrows for pagination (when not typing)
+    if (!isInput) {
+      if (e.key === 'ArrowLeft' && currentPage > 1) {
+        currentPage--;
+        renderPage();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      if (e.key === 'ArrowRight') {
+        const totalPages = Math.ceil(filteredCards.length / ITEMS_PER_PAGE);
+        if (currentPage < totalPages) {
+          currentPage++;
+          renderPage();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }
+    }
+  });
 </script>

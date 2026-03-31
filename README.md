@@ -1,95 +1,172 @@
-# Prompt Library
+<div align="center">
 
-> A minimal, blazing-fast prompt library for developers. Built to be used daily — not visited once.
+# ⚡ Prompt Library
 
-A compact, dense, utility-first UI built with **Astro**, **Tailwind CSS**, and **Vanilla JS**, featuring a soft, developer-grade dark mode and precise micro-interactions.
+**A blazing-fast, developer-first prompt collection built for daily use.**
 
-## 🚀 Features
+[Live Site](https://prompts.fazleyrabbi.xyz) · [Changelog](https://prompts.fazleyrabbi.xyz/changelog) · [Add a Prompt](#-adding-prompts)
 
-- **Dark Mode Only**: A layered dark UI system (not pure black) optimized for readability.
-- **Speed & Performance**: Static output with a Lighthouse score target of 95+. Zero hydration in Phase 1 setup.
-- **Fast Copy Interactions**: 120ms transitions with instant clipboard actions.
-- **Markdown Driven**: Prompts are stored and managed using Astro Content Collections.
-- **Micro-Interactions**: Subtle, CSS-first animations, hover lifts, and scale presses.
+![Astro](https://img.shields.io/badge/Astro-FF5D01?logo=astro&logoColor=white)
+![Tailwind](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)
+![GitHub Pages](https://img.shields.io/badge/Deployed_on-GitHub_Pages-222?logo=github)
+![Prompts](https://img.shields.io/badge/33+-Prompts-6366F1)
 
-## ✨ Tech Stack
+</div>
 
-- **Framework:** [Astro](https://astro.build/) (Static Site Generation)
-- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
-- **Content:** Astro Content Collections (Zod validated Markdown)
-- **Interactions:** Vanilla JavaScript
-- **Syntax Highlighting:** Shiki (Astro built-in)
+---
 
-## 📦 File Structure
+## Overview
 
-```text
-src/
-├── components/       # UI Components (PromptCard, CopyButton, Tag)
-├── content/
-│   ├── prompts/      # Markdown prompt files here
-│   └── config.ts     # Zod schema definitions
-├── layouts/          # Global layout structure
-├── pages/            # View routing (Home, prompt details)
-└── styles/           # Global CSS variables and Tailwind imports
+Prompt Library is a curated, searchable collection of **33+ production-ready prompts** for UI components, layouts, and developer tools. Built with Astro for zero-JS static output, it loads instantly and is designed to be a daily-use tool — not a portfolio piece.
+
+### Why This Exists
+
+Copy-pasting prompts from scattered notes and bookmarks is slow. This library puts every prompt in one place with instant search, category filtering, and one-click copy.
+
+---
+
+## ✨ Features
+
+| Feature | Description |
+|---------|-------------|
+| **Sidebar Navigation** | Categories with counts, tag cloud, and favorites filter |
+| **Instant Search** | Client-side search across titles, tags, and AI models |
+| **Favorites** | Heart prompts for quick access — persisted in localStorage |
+| **Pagination** | 8 items per page, auto-adjusts to search/filter results |
+| **Detail Pages** | Syntax-highlighted prompts with breadcrumbs and related prompts |
+| **Copy to Clipboard** | One-click copy with premium toast notifications |
+| **Changelog** | Timeline-based release history at `/changelog` |
+| **Mobile Responsive** | Collapsible sidebar with overlay on small screens |
+
+---
+
+## 🛠️ Tech Stack
+
+- **Framework:** [Astro](https://astro.build/) — Static Site Generation, zero JS by default
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/) — Utility-first, dark mode only
+- **Content:** Astro Content Collections with Zod schema validation
+- **Syntax Highlighting:** [Shiki](https://shiki.matsu.io/) via Astro built-in
+- **Deployment:** GitHub Pages with automated CI/CD
+- **Domain:** Custom subdomain via Cloudflare DNS
+
+---
+
+## 🚀 Quick Start
+
+```bash
+# Clone
+git clone https://github.com/fazleyrabby/prompts.git
+cd prompts
+
+# Install
+pnpm install
+
+# Dev server
+pnpm dev
+
+# Build
+pnpm build
 ```
 
-## 🛠️ Getting Started
+> Requires Node.js 18+ and pnpm (or npm/yarn).
 
-### Prerequisites
-
-You need Node.js and a package manager (like `pnpm`, `npm`, or `yarn`) installed.
-
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/fazleyrabby/prompts.git
-   cd prompts
-   ```
-
-2. Install dependencies:
-   ```bash
-   pnpm install
-   ```
-
-3. Start the development server:
-   ```bash
-   pnpm run dev
-   ```
-
-4. Build for production:
-   ```bash
-   pnpm run build
-   ```
+---
 
 ## 📝 Adding Prompts
 
-To add a new prompt, simply create a new `.md` file in `src/content/prompts/` using the following frontmatter schema:
+Create a `.md` file in `src/content/prompts/`:
 
 ```markdown
 ---
-title: "Title of your prompt"
-description: "A short description"
-category: "category_name"
-tags: ["tag1", "tag2"]
-preview: "/previews/image.png" # Optional placeholder fallback will run if not present
-model: "claude-3-opus"
+title: "Your Prompt Title"
+description: "A short, one-line description."
+category: "dashboard"
+tags: ["ui", "table", "data"]
+model: "Claude 4.6 Opus"
 ---
 
 ## Prompt
 
-Your actual prompt content goes here.
+Your actual prompt instructions go here.
+Use bullet points for structured prompts:
+- Requirement one
+- Requirement two
+- Technical constraint
 
 ## Notes
 
-Add any optional usage tips here (this section is rendered under the prompt block).
+- Optional tips or usage context.
+- Best practices for this prompt.
 ```
 
-## 📜 Roadmap
+### Available Categories
 
-- [x] **Phase 1**: Core MVP (Card grid, detail page, copy button, dark UI)
-- [ ] **Phase 2**: Filtering (Category grouping, tag filtering via URL parameters)
-- [ ] **Phase 3**: Client-side Search (using Fuse.js)
-- [ ] **Phase 4**: Scaling (Pagination, RSS feed, etc.)
+`animation` · `api` · `authentication` · `card` · `dashboard` · `ecommerce` · `email` · `feedback` · `form` · `hero` · `landing-page` · `layout` · `marketing` · `media` · `modal` · `navigation` · `utility`
 
-*Updated: Tue Mar 31 23:28:30 +06 2026*
+---
+
+## 📁 Project Structure
+
+```
+src/
+├── components/          # PromptCard, CopyButton, Tag, Toast
+├── content/
+│   ├── prompts/         # 33+ markdown prompt files
+│   └── config.ts        # Zod schema validation
+├── layouts/
+│   └── BaseLayout.astro # Global shell with theme & toast
+├── pages/
+│   ├── index.astro      # Home — sidebar, grid, search, pagination
+│   ├── changelog.astro  # Release timeline
+│   └── prompt/
+│       └── [slug].astro # Detail page with related prompts
+└── styles/
+    └── global.css       # Tailwind directives
+```
+
+---
+
+## 🎨 Design System
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--bg` | `#0B0F14` | Page background |
+| `--surface` | `#111827` | Card backgrounds |
+| `--border` | `rgba(255,255,255,0.08)` | Dividers and card borders |
+| `--accent-start` | `#6366F1` | Primary accent (indigo) |
+| `--accent-end` | `#8B5CF6` | Gradient end (violet) |
+| `--text-primary` | `#E5E7EB` | Headings and body text |
+| `--text-secondary` | `#9CA3AF` | Muted labels and descriptions |
+
+---
+
+## 📋 Roadmap
+
+- [x] Core MVP — card grid, detail pages, copy button, dark UI
+- [x] Client-side search across titles, tags, and models
+- [x] Category and tag-based filtering
+- [x] Pagination (8 per page)
+- [x] Sidebar layout with sticky navigation
+- [x] Breadcrumbs and related prompts on detail pages
+- [x] Favorites with localStorage persistence
+- [x] Toast notification system
+- [x] Changelog page
+- [x] 33+ curated prompts across 17 categories
+- [ ] Keyboard shortcuts (`/` to search, `Esc` to clear)
+- [ ] Share prompt as link
+- [ ] Dark/Light mode toggle
+- [ ] Prompt usage analytics (localStorage)
+- [ ] RSS feed for new prompts
+- [ ] Contribution guide
+
+---
+
+## 📄 License
+
+MIT — use it, fork it, build on it.
+
+---
+
+<div align="center">
+  <sub>Built by <a href="https://fazleyrabbi.xyz">Fazley Rabbi</a></sub>
+</div>
