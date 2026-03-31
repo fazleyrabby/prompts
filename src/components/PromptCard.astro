@@ -1,0 +1,82 @@
+---
+import Tag from './Tag.astro';
+import CopyButton from './CopyButton.astro';
+
+const { title, description, category, tags, preview, model, slug, promptText } = Astro.props;
+---
+
+<div class="prompt-card group relative flex flex-col overflow-hidden leading-snug h-full w-full max-w-sm mx-auto sm:max-w-none">
+  <!-- Link overlay to go to detail page -->
+  <a href={`/prompt/${slug}`} class="absolute inset-0 z-10">
+    <span class="sr-only">View prompt details</span>
+  </a>
+
+  <!-- Preview image or fallback -->
+  <div class="card-preview w-full aspect-video bg-[var(--bg)] flex items-center justify-center border-b border-[var(--border)] overflow-hidden">
+    {preview ? (
+      <img src={preview} alt={title} class="w-full h-full object-cover" width="640" height="360" loading="lazy">
+    ) : (
+      <!-- Fallback using category label -->
+      <span class="text-[var(--text-secondary)] font-mono text-xl uppercase tracking-widest opacity-30 select-none">
+        {category}
+      </span>
+    )}
+  </div>
+
+  <div class="p-5 flex flex-col flex-grow">
+    <!-- Title & Description -->
+    <h3 class="text-lg font-medium text-[var(--text-primary)] mb-1 font-heading">{title}</h3>
+    <p class="text-[var(--text-secondary)] text-sm line-clamp-1 mb-4">{description}</p>
+    
+    <!-- Tags -->
+    <div class="flex flex-wrap gap-2 mb-6">
+      {tags.map((tag: string) => (
+        <span class="relative z-20">
+          <Tag label={tag} />
+        </span>
+      ))}
+    </div>
+    
+    <!-- Spacer -->
+    <div class="flex-grow"></div>
+
+    <!-- Bottom Row: Model Badge & Copy Button -->
+    <div class="flex items-center justify-between mt-auto">
+      <span class="model-badge text-[10px] uppercase font-mono tracking-wider sm:text-xs">
+        {model}
+      </span>
+      <div class="relative z-20">
+        <CopyButton promptText={promptText} fullWidth={false} />
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .font-heading {
+    font-family: 'DM Sans', 'Plus Jakarta Sans', sans-serif;
+  }
+  .prompt-card {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    transition: all 160ms ease-out;
+  }
+  .prompt-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.45);
+    border-color: var(--border-hover);
+  }
+
+  .model-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.125rem 0.625rem;
+    border-radius: 9999px;
+    background-color: rgba(16, 185, 129, 0.12); /* Green-ish */
+    color: #10B981;
+    cursor: default;
+  }
+</style>

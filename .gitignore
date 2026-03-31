@@ -1,0 +1,23 @@
+# node_modules
+node_modules/
+.pnp
+.pnp.js
+
+# build output
+dist/
+.astro/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# system files
+.DS_Store
+
+# environments
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

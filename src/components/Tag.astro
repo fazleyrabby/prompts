@@ -1,0 +1,30 @@
+---
+const { label } = Astro.props;
+---
+
+<span class="tag uppercase tracking-widest text-[10px] sm:text-xs">
+  {label}
+</span>
+
+<style>
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.125rem 0.625rem;
+    border-radius: 9999px;
+    background-color: rgba(99, 102, 241, 0.1);
+    color: var(--accent-start);
+    font-family: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+    font-weight: 500;
+    line-height: 1.5;
+    transition: background-color 100ms ease, color 100ms ease;
+    cursor: default;
+  }
+
+  /* In Phase 2 this will switch to cursor: pointer */
+  .tag:hover {
+    background-color: rgba(99, 102, 241, 0.2);
+    /* cursor: pointer; */
+  }
+</style>

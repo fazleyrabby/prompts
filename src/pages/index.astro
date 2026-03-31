@@ -1,0 +1,46 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PromptCard from '../components/PromptCard.astro';
+
+// Fetch all prompts
+const prompts = await getCollection('prompts');
+---
+
+<BaseLayout 
+  title="Home" 
+  description="A minimal, blazing-fast prompt library for developers."
+>
+  <!-- Header -->
+  <header class="flex items-center justify-between mb-16 border-b border-[var(--border)] pb-6 relative z-10">
+    <h1 class="text-2xl font-semibold font-heading tracking-tight text-[var(--text-primary)]">
+      Prompt Library
+    </h1>
+    <span class="text-sm text-[var(--text-secondary)] hidden sm:block">
+      A compact, dense, utility-first prompt collection.
+    </span>
+  </header>
+
+  <!-- Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    {prompts.map((prompt) => (
+      <PromptCard 
+        title={prompt.data.title}
+        description={prompt.data.description}
+        category={prompt.data.category}
+        tags={prompt.data.tags}
+        preview={prompt.data.preview}
+        model={prompt.data.model}
+        slug={prompt.slug}
+        promptText={prompt.body.replace(/## Prompt\s+/, '').split('## Notes')[0].trim()}
+      />
+    ))}
+  </div>
+  
+  {prompts.length === 0 && (
+    <div class="text-[var(--text-secondary)] text-center py-20 border border-[var(--border)] border-dashed rounded-lg">
+      <p class="mb-2">No prompts found.</p>
+      <p class="text-sm">Add some markdown files to <code>src/content/prompts/</code>.</p>
+    </div>
+  )}
+</BaseLayout>

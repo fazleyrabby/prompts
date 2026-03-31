@@ -1,0 +1,148 @@
+---
+import { getCollection } from 'astro:content';
+import { Code } from 'astro:components';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Tag from '../../components/Tag.astro';
+import CopyButton from '../../components/CopyButton.astro';
+
+export async function getStaticPaths() {
+  const prompts = await getCollection('prompts');
+  return prompts.map(entry => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+
+// Extract the prompt portion for the raw string copying
+const rawBody = entry.body;
+const parts = rawBody.split('## Notes');
+let promptText = parts[0] || '';
+const noteText = parts[1] || '';
+
+// Clean the extracted prompt: remove the "## Prompt" heading if it exists
+promptText = promptText.replace(/## Prompt\s+/, '').trim();
+
+---
+
+<BaseLayout 
+  title={entry.data.title}
+  description={entry.data.description}
+>
+  <!-- Top Nav Row -->
+  <div class="flex items-center justify-between mb-8 pb-4 border-b border-[var(--border)]">
+    <a href="/" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors flex items-center font-mono text-sm group">
+      <span class="mr-2 group-hover:-translate-x-1 transition-transform">←</span>
+      Back to Library
+    </a>
+    
+    <!-- Copy Full Prompt Button in header -->
+    <div class="relative z-10 hidden sm:block">
+       <CopyButton promptText={promptText} fullWidth={false} />
+    </div>
+  </div>
+
+  <article class="max-w-4xl">
+    <!-- Title Area -->
+    <header class="mb-10 mt-6">
+      <h1 class="text-3xl sm:text-4xl font-semibold font-heading text-[var(--text-primary)] mb-3 tracking-tight">
+        {entry.data.title}
+      </h1>
+      <p class="text-lg text-[var(--text-secondary)] mb-6 font-body">
+        {entry.data.description}
+      </p>
+      
+      <div class="flex flex-wrap items-center gap-3 mb-6 relative z-10">
+        <span class="text-xs uppercase font-mono tracking-wider text-[var(--text-secondary)] mr-2">Tags:</span>
+        {entry.data.tags.map((tag: string) => (
+          <Tag label={tag} />
+        ))}
+        <span class="mx-3 text-[var(--border)]">|</span>
+        <span class="text-xs uppercase font-mono tracking-wider text-[var(--text-secondary)] mr-2">Model:</span>
+        <span class="model-badge text-xs uppercase font-mono tracking-wider">
+          {entry.data.model}
+        </span>
+      </div>
+    </header>
+
+    <div class="h-px bg-[var(--border)] w-full mb-10"></div>
+
+    <!-- Layout -> Left / Right sections or vertical stack -->
+    <section class="mb-12">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-medium font-heading tracking-tight">Prompt</h2>
+        <!-- Copy Button for Mobile only or Duplicate -->
+        <div class="relative z-10 sm:hidden">
+          <CopyButton promptText={promptText} fullWidth={false} />
+        </div>
+      </div>
+      
+      <div class="relative group">
+        <!-- Render code block using Code from Astro -->
+        <div class="bg-black rounded-xl overflow-hidden border border-[var(--border)] text-sm shadow-xl font-mono relative code-wrapper">
+          <Code code={promptText} lang="markdown" theme="github-dark" wrap={true} />
+        </div>
+        
+        <div class="absolute top-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block">
+           <CopyButton promptText={promptText} fullWidth={false} />
+        </div>
+      </div>
+    </section>
+
+    {noteText.trim() && (
+      <section class="pt-6 border-t border-[var(--border)] text-[var(--text-secondary)] prose prose-invert prose-p:text-[var(--text-secondary)] prose-headings:text-[var(--text-primary)] prose-a:text-[var(--accent-start)] prose-li:text-[var(--text-secondary)] font-body">
+        <h2 class="text-xl font-medium font-heading tracking-tight text-[var(--text-primary)] mb-4">Notes</h2>
+        <div class="markdown-content">
+          <!-- We could just render the parsed notes via markdown processing, or we can use Content, but Content injects the whole file. Let's just output the whole Content, but hide the Prompt using CSS, or we can parse it.
+               Actually, Content renders the WHOLE markdown file. To do it perfectly, we just render Content and style `h2:first-of-type` + `<p>` out, or write a custom plugin.
+               But the simplest is to just use a fast markdown parser, or style <Content /> to hide ## Prompt section.
+               Wait! Astro <Content /> renders everything. We will hide the h2#prompt and it's following paragraph using CSS if needed. But let's just use <Content /> and style it. -->
+           <Content />
+        </div>
+      </section>
+    )}
+  </article>
+</BaseLayout>
+
+<style>
+  .model-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.125rem 0.625rem;
+    border-radius: 9999px;
+    background-color: rgba(16, 185, 129, 0.12);
+    color: #10B981;
+    cursor: default;
+  }
+  
+  :global(.code-wrapper pre) {
+    background-color: transparent !important;
+    padding: 1.5rem !important;
+    margin: 0 !important;
+    border-radius: 0.75rem;
+  }
+  
+  :global(.code-wrapper code) {
+    font-family: var(--font-mono, 'JetBrains Mono', 'IBM Plex Mono', monospace);
+    line-height: 1.6;
+  }
+
+  /* To hide the original Prompt section and only show Notes from <Content />, as we explicitly render the prompt above. */
+  .markdown-content :global(h2:first-of-type),
+  .markdown-content :global(h2:first-of-type + p),
+  .markdown-content :global(h2:first-of-type ~ p:not(h2#notes ~ p)),
+  .markdown-content :global(h2:first-of-type ~ ul:not(h2#notes ~ ul)) {
+     display: none;
+  }
+  /* Show only everything after the Notes heading */
+  .markdown-content :global(h2#notes),
+  .markdown-content :global(h2#notes ~ *) {
+     display: block;
+  }
+  /* Ensure proper typography */
+  .markdown-content :global(ul) { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+  .markdown-content :global(p) { margin-bottom: 1rem; }
+</style>
