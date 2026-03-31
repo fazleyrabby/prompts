@@ -40,6 +40,19 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
         <h3 class="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-3">Categories</h3>
         <div class="flex flex-col gap-1" id="categoryFilters">
           <button 
+            id="favFilter"
+            class="category-btn flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-left text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] transition-all mb-1"
+          >
+            <span class="flex items-center gap-2">
+              <svg class="w-3.5 h-3.5 text-rose-400" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+              Favorites
+            </span>
+            <span id="favCount" class="text-xs font-mono opacity-60">0</span>
+          </button>
+          <div class="h-px bg-[var(--border)] mb-1"></div>
+          <button 
             data-category="all"
             class="category-btn active flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-left transition-all"
           >
@@ -129,6 +142,7 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
             data-title={prompt.data.title.toLowerCase()} 
             data-desc={prompt.data.description.toLowerCase()} 
             data-model={prompt.data.model.toLowerCase()}
+            data-slug={prompt.slug}
           >
             <PromptCard 
               title={prompt.data.title}
@@ -247,6 +261,8 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
   const sidebar = document.getElementById('sidebar');
   const sidebarToggle = document.getElementById('sidebarToggle');
   const clearTagsBtn = document.getElementById('clearTags');
+  const favFilterBtn = document.getElementById('favFilter');
+  const favCountEl = document.getElementById('favCount');
 
   const ITEMS_PER_PAGE = 8;
   let activeCategory = 'all';
@@ -254,6 +270,17 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
   let searchQuery = '';
   let currentPage = 1;
   let filteredCards: HTMLElement[] = [];
+  let showFavoritesOnly = false;
+
+  function updateFavCount() {
+    const favs: string[] = JSON.parse(localStorage.getItem('prompt-favorites') || '[]');
+    if (favCountEl) favCountEl.textContent = favs.length.toString();
+  }
+  updateFavCount();
+  window.addEventListener('favorites-changed', () => {
+    updateFavCount();
+    if (showFavoritesOnly) filterPrompts();
+  });
 
   // Mobile sidebar
   const overlay = document.createElement('div');
@@ -348,8 +375,15 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
                             desc.includes(searchQuery) || 
                             model.includes(searchQuery) ||
                             tags.some(tag => tag.toLowerCase().includes(searchQuery));
+      
+      // Favorites filter
+      let matchesFav = true;
+      if (showFavoritesOnly) {
+        const favs: string[] = JSON.parse(localStorage.getItem('prompt-favorites') || '[]');
+        matchesFav = favs.includes(el.dataset.slug || '');
+      }
 
-      if (matchesCategory && matchesTags && matchesSearch) {
+      if (matchesCategory && matchesTags && matchesSearch && matchesFav) {
         filteredCards.push(el);
       }
     });
@@ -374,10 +408,21 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
   categoryBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       categoryBtns.forEach(b => b.classList.remove('active'));
+      favFilterBtn?.classList.remove('active');
       btn.classList.add('active');
       activeCategory = (btn as HTMLElement).dataset.category || 'all';
+      showFavoritesOnly = false;
       filterPrompts();
     });
+  });
+
+  // Favorites filter
+  favFilterBtn?.addEventListener('click', () => {
+    categoryBtns.forEach(b => b.classList.remove('active'));
+    favFilterBtn.classList.add('active');
+    showFavoritesOnly = true;
+    activeCategory = 'all';
+    filterPrompts();
   });
 
   // Tag buttons (toggle)

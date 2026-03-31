@@ -11,6 +11,17 @@ const { title, description, category, tags, preview, model, slug, promptText } =
     <span class="sr-only">View prompt details</span>
   </a>
 
+  <!-- Favorite Button -->
+  <button 
+    class="fav-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center border border-[var(--border)] bg-[var(--bg)]/80 backdrop-blur-sm hover:scale-110 transition-all"
+    data-slug={slug}
+    aria-label="Toggle favorite"
+  >
+    <svg class="fav-icon w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+
   <!-- Preview image or fallback -->
   <div class="card-preview w-full aspect-video bg-[var(--bg)] flex items-center justify-center border-b border-[var(--border)] overflow-hidden">
     {preview ? (
@@ -75,8 +86,65 @@ const { title, description, category, tags, preview, model, slug, promptText } =
     justify-content: center;
     padding: 0.125rem 0.625rem;
     border-radius: 9999px;
-    background-color: rgba(16, 185, 129, 0.12); /* Green-ish */
+    background-color: rgba(16, 185, 129, 0.12);
     color: #10B981;
     cursor: default;
   }
+
+  .fav-btn {
+    opacity: 0;
+    transition: all 150ms ease-out;
+  }
+  .prompt-card:hover .fav-btn {
+    opacity: 1;
+  }
+  .fav-btn.active {
+    opacity: 1;
+  }
+  .fav-btn.active .fav-icon {
+    fill: #f43f5e;
+    stroke: #f43f5e;
+  }
 </style>
+
+<script>
+  function setupFavorites() {
+    const favBtns = document.querySelectorAll('.fav-btn');
+    const favs: string[] = JSON.parse(localStorage.getItem('prompt-favorites') || '[]');
+
+    favBtns.forEach(btn => {
+      const slug = (btn as HTMLElement).dataset.slug || '';
+      if (favs.includes(slug)) {
+        btn.classList.add('active');
+      }
+
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const currentFavs: string[] = JSON.parse(localStorage.getItem('prompt-favorites') || '[]');
+        
+        if (currentFavs.includes(slug)) {
+          const updated = currentFavs.filter(s => s !== slug);
+          localStorage.setItem('prompt-favorites', JSON.stringify(updated));
+          btn.classList.remove('active');
+          if (typeof (window as any).showToast === 'function') {
+            (window as any).showToast('Removed from favorites', 'info');
+          }
+        } else {
+          currentFavs.push(slug);
+          localStorage.setItem('prompt-favorites', JSON.stringify(currentFavs));
+          btn.classList.add('active');
+          if (typeof (window as any).showToast === 'function') {
+            (window as any).showToast('Added to favorites ♥', 'success');
+          }
+        }
+
+        // Dispatch event so sidebar can update
+        window.dispatchEvent(new CustomEvent('favorites-changed'));
+      });
+    });
+  }
+
+  setupFavorites();
+  document.addEventListener('astro:page-load', setupFavorites);
+</script>

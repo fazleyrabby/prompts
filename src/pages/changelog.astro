@@ -1,0 +1,147 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const changelog = [
+  {
+    date: '2026-04-01',
+    version: 'v1.3.0',
+    title: 'Favorites, Toast Notifications & Changelog',
+    changes: [
+      { type: 'feature', text: 'Favorites system with localStorage persistence' },
+      { type: 'feature', text: 'Premium toast notifications on copy and favorite actions' },
+      { type: 'feature', text: 'Changelog page to track all updates' },
+      { type: 'feature', text: 'Heart button on prompt cards with hover reveal' },
+      { type: 'feature', text: 'Favorites filter in sidebar with live count' },
+      { type: 'improvement', text: 'Toast UI with gradient backgrounds and progress bars' },
+    ]
+  },
+  {
+    date: '2026-03-31',
+    version: 'v1.2.0',
+    title: 'Sidebar Layout & Content Expansion',
+    changes: [
+      { type: 'feature', text: 'Sidebar layout with search, categories, and tags' },
+      { type: 'feature', text: 'Detail page breadcrumbs with clickable category links' },
+      { type: 'feature', text: 'Related prompts section on detail pages' },
+      { type: 'feature', text: 'URL-based category pre-selection (?category=)' },
+      { type: 'feature', text: 'Clear button for tag filters' },
+      { type: 'content', text: 'Expanded library from 13 to 33 prompts' },
+      { type: 'content', text: 'New categories: animation, api, email, form, landing-page, media, modal, utility' },
+    ]
+  },
+  {
+    date: '2026-03-31',
+    version: 'v1.1.0',
+    title: 'Search, Filtering & Pagination',
+    changes: [
+      { type: 'feature', text: 'Client-side search by title, tags, and AI model' },
+      { type: 'feature', text: 'Category-based filtering with tag toggles' },
+      { type: 'feature', text: 'Pagination with 8 items per page' },
+      { type: 'improvement', text: 'Result count updates dynamically' },
+      { type: 'fix', text: 'Fixed Tailwind CSS variable opacity syntax' },
+    ]
+  },
+  {
+    date: '2026-03-31',
+    version: 'v1.0.0',
+    title: 'Initial Launch',
+    changes: [
+      { type: 'feature', text: 'Prompt library with 13 curated developer prompts' },
+      { type: 'feature', text: 'Responsive grid layout (up to 5 columns)' },
+      { type: 'feature', text: 'Syntax-highlighted prompt detail pages with Shiki' },
+      { type: 'feature', text: 'One-click copy to clipboard' },
+      { type: 'feature', text: 'GitHub Pages deployment with CI/CD' },
+      { type: 'feature', text: 'Custom domain: prompts.fazleyrabbi.xyz' },
+      { type: 'improvement', text: 'Dark mode first design with DM Sans typography' },
+    ]
+  },
+];
+
+const typeConfig: Record<string, { label: string; color: string; bg: string }> = {
+  feature: { label: 'New', color: '#10B981', bg: 'rgba(16, 185, 129, 0.12)' },
+  improvement: { label: 'Improved', color: '#6366F1', bg: 'rgba(99, 102, 241, 0.12)' },
+  fix: { label: 'Fixed', color: '#F59E0B', bg: 'rgba(245, 158, 11, 0.12)' },
+  content: { label: 'Content', color: '#8B5CF6', bg: 'rgba(139, 92, 246, 0.12)' },
+};
+---
+
+<BaseLayout 
+  title="Changelog" 
+  description="All updates and improvements to the Prompt Library."
+>
+  <div class="max-w-3xl mx-auto">
+    <!-- Header -->
+    <header class="mb-12">
+      <nav class="flex items-center gap-2 text-sm font-mono mb-6 text-[var(--text-secondary)]">
+        <a href="/" class="hover:text-[var(--text-primary)] transition-colors">Library</a>
+        <span class="opacity-30">/</span>
+        <span class="text-[var(--text-primary)]">Changelog</span>
+      </nav>
+
+      <h1 class="text-3xl sm:text-4xl font-semibold font-heading text-[var(--text-primary)] mb-3 tracking-tight">
+        Changelog
+      </h1>
+      <p class="text-lg text-[var(--text-secondary)]">
+        All notable changes to the Prompt Library are documented here.
+      </p>
+    </header>
+
+    <!-- Timeline -->
+    <div class="relative">
+      <!-- Vertical line -->
+      <div class="absolute left-[11px] top-2 bottom-2 w-px bg-[var(--border)]"></div>
+
+      <div class="flex flex-col gap-12">
+        {changelog.map((release, idx) => (
+          <div class="relative pl-10">
+            <!-- Timeline dot -->
+            <div class:list={[
+              "absolute left-0 top-1 w-6 h-6 rounded-full flex items-center justify-center border-2",
+              idx === 0 ? "border-[var(--accent-start)] bg-[var(--accent-start)]" : "border-[var(--border)] bg-[var(--bg)]"
+            ]}>
+              {idx === 0 ? (
+                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.957c.3.921-.755 1.688-1.54 1.118l-3.37-2.448a1 1 0 00-1.176 0l-3.37 2.448c-.783.57-1.838-.197-1.539-1.118l1.287-3.957a1 1 0 00-.364-1.118L2.063 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.957z"/>
+                </svg>
+              ) : (
+                <div class="w-2 h-2 rounded-full bg-[var(--text-secondary)] opacity-40"></div>
+              )}
+            </div>
+
+            <!-- Release header -->
+            <div class="flex items-baseline gap-3 mb-4">
+              <span class="text-xs font-mono px-2.5 py-0.5 rounded-md bg-[var(--surface)] border border-[var(--border)] text-[var(--accent-start)]">
+                {release.version}
+              </span>
+              <time class="text-xs font-mono text-[var(--text-secondary)]">
+                {new Date(release.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+              </time>
+            </div>
+
+            <h2 class="text-xl font-semibold font-heading text-[var(--text-primary)] mb-4 tracking-tight">
+              {release.title}
+            </h2>
+
+            <!-- Changes list -->
+            <ul class="flex flex-col gap-2.5">
+              {release.changes.map(change => {
+                const config = typeConfig[change.type] || typeConfig.feature;
+                return (
+                  <li class="flex items-start gap-3 text-sm">
+                    <span 
+                      class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider shrink-0 mt-0.5"
+                      style={`background: ${config.bg}; color: ${config.color};`}
+                    >
+                      {config.label}
+                    </span>
+                    <span class="text-[var(--text-secondary)] leading-relaxed">{change.text}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</BaseLayout>
