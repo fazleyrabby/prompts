@@ -8,6 +8,8 @@ model: "GPT 5.3 Ultra"
 
 ## Prompt
 
+Act as a Senior Media/Graphics Engineer.
+
 Create a masonry-style image gallery:
 - CSS columns-based masonry layout (no JS needed)
 - Images with rounded corners and subtle shadow

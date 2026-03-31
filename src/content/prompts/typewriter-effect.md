@@ -8,6 +8,8 @@ model: "Gemini 3.1 Pro"
 
 ## Prompt
 
+Act as an Elite Creative Technologist and Animation Expert.
+
 Create a typewriter text effect component:
 - Types out a string character by character
 - Blinking cursor at the end using CSS

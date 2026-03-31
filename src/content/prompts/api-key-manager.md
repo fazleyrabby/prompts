@@ -8,6 +8,8 @@ model: "Claude 4.6 Opus"
 
 ## Prompt
 
+Act as a Senior Architect and Elite Backend Engineer.
+
 Design an API key management panel:
 - Table listing keys: name, prefix (sk_...xxxx), created date, status
 - Create new key modal with name input

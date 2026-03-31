@@ -8,6 +8,8 @@ model: "Gemini 3.1 Pro"
 
 ## Prompt
 
+Act as a Senior Architect and Elite Backend Engineer.
+
 Create a REST API documentation page layout:
 - Sidebar with endpoint list grouped by resource
 - Main area showing endpoint details

@@ -8,6 +8,8 @@ model: "Claude 4.6 Opus"
 
 ## Prompt
 
+Act as an Elite Creative Technologist and Animation Expert.
+
 Create a skeleton loading screen component with:
 - Pulsing gradient animation on placeholder blocks
 - Mimics a card layout with avatar, title, and text lines

@@ -8,6 +8,8 @@ model: "Gemini 3.1 Pro"
 
 ## Prompt
 
+Act as a Senior Frontend Engineer specializing in UX and validation.
+
 Create a custom date picker component:
 - Calendar grid showing month view
 - Previous/Next month navigation

@@ -8,6 +8,8 @@ model: "Claude 4.6 Opus"
 
 ## Prompt
 
+Act as a 10x SWE and Performance Expert.
+
 Build a keyboard shortcuts help panel:
 - Triggered by pressing `?` key
 - Floating centered modal with sections

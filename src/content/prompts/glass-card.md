@@ -8,6 +8,8 @@ model: "GPT 5.3 Ultra"
 
 ## Prompt
 
+Act as a Senior Frontend Developer and CSS Specialist.
+
 Design a minimal settings card with a glassmorphic effect. Apply:
 - `backdrop-filter: blur(12px)`
 - A semi-transparent border (`rgba(255, 255, 255, 0.1)`)

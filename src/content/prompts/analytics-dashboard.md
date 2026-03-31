@@ -8,6 +8,8 @@ model: "GPT 5.3 Ultra"
 
 ## Prompt
 
+Act as a 10x Senior Frontend Developer and UI/UX Expert.
+
 Build an analytics dashboard layout:
 - Top row: 4 stat cards (Total Users, Revenue, Conversion, Growth)
 - Each card: metric value, label, percentage change indicator

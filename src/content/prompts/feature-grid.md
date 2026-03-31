@@ -8,6 +8,8 @@ model: "Gemini 3.1 Pro"
 
 ## Prompt
 
+Act as a 10x Creative Technologist and Frontend Expert.
+
 Build a Marketing Feature Grid that includes:
 - Clean and semantic HTML
 - Tailwind CSS styling tailored for dark mode

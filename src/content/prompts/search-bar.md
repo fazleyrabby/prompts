@@ -8,6 +8,8 @@ model: "Claude 4.6 Opus"
 
 ## Prompt
 
+Act as a Senior Frontend Developer specializing in accessible UI.
+
 Build a Command Palette that includes:
 - Clean and semantic HTML
 - Tailwind CSS styling tailored for dark mode

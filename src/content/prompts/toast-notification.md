@@ -8,6 +8,8 @@ model: "Claude 4.6 Sonnet"
 
 ## Prompt
 
+Act as a Senior UX Engineer.
+
 Build a Success Toast that includes:
 - Clean and semantic HTML
 - Tailwind CSS styling tailored for dark mode

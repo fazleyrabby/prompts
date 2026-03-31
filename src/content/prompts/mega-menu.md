@@ -8,6 +8,8 @@ model: "Claude 4.6 Opus"
 
 ## Prompt
 
+Act as a Senior Frontend Developer specializing in accessible UI.
+
 Build a mega menu navigation:
 - Top-level horizontal nav bar
 - Hover triggers full-width dropdown panel

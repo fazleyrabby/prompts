@@ -8,6 +8,8 @@ model: "Gemini 3.1 Pro"
 
 ## Prompt
 
+Act as a Senior Frontend Engineer and Conversion Specialist.
+
 Create a testimonial carousel component:
 - Horizontal slider with smooth CSS scroll-snap
 - Each slide: quote text, author name, role, and avatar

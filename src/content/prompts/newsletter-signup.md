@@ -8,6 +8,8 @@ model: "Claude 4.6 Opus"
 
 ## Prompt
 
+Act as a Senior Email Developer and HTML Specialist.
+
 Design a newsletter signup form:
 - Single-line layout: email input + submit button
 - Client-side email validation with error message

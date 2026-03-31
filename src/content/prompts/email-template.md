@@ -8,6 +8,8 @@ model: "GPT 5.3 Ultra"
 
 ## Prompt
 
+Act as a Senior Email Developer and HTML Specialist.
+
 Build a transactional email template for order confirmations:
 - Table-based layout for email client compatibility
 - Header with logo placeholder

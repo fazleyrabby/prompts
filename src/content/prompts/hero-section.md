@@ -8,6 +8,8 @@ model: "Claude 4.6 Opus"
 
 ## Prompt
 
+Act as a Senior Frontend Engineer and Conversion Specialist.
+
 Design a full-width hero section with:
 - Animated gradient background (slow color shift)
 - Large headline with gradient text

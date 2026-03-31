@@ -8,6 +8,8 @@ model: "GPT 5.3 Ultra"
 
 ## Prompt
 
+Act as an Elite Creative Technologist and Animation Expert.
+
 Build a scroll-reveal animation system using Intersection Observer:
 - Elements fade in and slide up when entering viewport
 - Staggered delays for grid children

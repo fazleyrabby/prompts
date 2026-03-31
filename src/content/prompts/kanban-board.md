@@ -8,6 +8,8 @@ model: "Claude 4.6 Opus"
 
 ## Prompt
 
+Act as a 10x Senior Frontend Developer and UI/UX Expert.
+
 Design a Kanban task board layout:
 - 3 columns: To Do, In Progress, Done
 - Task cards with title, assignee avatar, priority label

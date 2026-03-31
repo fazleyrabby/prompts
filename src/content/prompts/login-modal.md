@@ -8,6 +8,8 @@ model: "Claude 4.6 Opus"
 
 ## Prompt
 
+Act as a Senior Security Architect and 10x SWE.
+
 Build a Elegant Login Modal that includes:
 - Clean and semantic HTML
 - Tailwind CSS styling tailored for dark mode

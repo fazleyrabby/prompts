@@ -8,6 +8,8 @@ model: "Gemini 3.1 Pro"
 
 ## Prompt
 
+Act as a 10x Frontend Developer.
+
 Create a confirmation dialog component:
 - Centered overlay with backdrop blur
 - Icon at top: warning triangle for destructive actions

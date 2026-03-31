@@ -8,6 +8,8 @@ model: "Claude 4.6 Opus"
 
 ## Prompt
 
+Act as a 10x Frontend Developer and Animation Expert.
+
 Create a modern SaaS landing page hero section inspired by Stripe with:
 - smooth gradient background
 - animated wave elements

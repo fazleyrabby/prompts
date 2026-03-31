@@ -8,6 +8,8 @@ model: "GPT 5.3 Ultra"
 
 ## Prompt
 
+Act as a 10x SWE and Performance Expert.
+
 Create a theme switcher component:
 - Toggle button with sun/moon icon animation
 - Smooth icon morph transition (rotate + scale)

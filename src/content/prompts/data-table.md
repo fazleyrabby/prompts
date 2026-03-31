@@ -8,6 +8,8 @@ model: "GPT 5.3 Ultra"
 
 ## Prompt
 
+Act as a 10x Senior Frontend Developer and UI/UX Expert.
+
 Build a Complex Data Table that includes:
 - Clean and semantic HTML
 - Tailwind CSS styling tailored for dark mode

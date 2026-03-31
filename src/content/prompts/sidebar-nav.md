@@ -8,6 +8,8 @@ model: "GPT 5.3 Ultra"
 
 ## Prompt
 
+Act as a Senior Frontend Developer specializing in accessible UI.
+
 Build a Collapsible Sidebar that includes:
 - Clean and semantic HTML
 - Tailwind CSS styling tailored for dark mode

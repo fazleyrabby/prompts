@@ -8,6 +8,8 @@ model: "GPT 5.3 Ultra"
 
 ## Prompt
 
+Act as a Senior Frontend Engineer specializing in UX and validation.
+
 Build a multi-step form wizard:
 - Step indicator bar at the top (numbered circles connected by lines)
 - 3 steps: Personal Info, Preferences, Review & Submit

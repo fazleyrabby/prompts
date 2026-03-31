@@ -8,6 +8,8 @@ model: "GPT 5.3 Ultra"
 
 ## Prompt
 
+Act as a Senior Architect and Full-Stack Expert.
+
 Build a Stripe Checkout Form that includes:
 - Clean and semantic HTML
 - Tailwind CSS styling tailored for dark mode

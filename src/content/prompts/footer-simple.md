@@ -8,6 +8,8 @@ model: "Gemini 3.1 Pro"
 
 ## Prompt
 
+Act as a Senior UI/UX Architect.
+
 Build a Minimal Footer that includes:
 - Clean and semantic HTML
 - Tailwind CSS styling tailored for dark mode

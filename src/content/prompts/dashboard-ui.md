@@ -8,6 +8,8 @@ model: "Gemini 3.1 Pro"
 
 ## Prompt
 
+Act as a Senior Frontend Developer specializing in accessible UI.
+
 Build a compact top navigation bar for a developer-focused tool with:
 - Monospace breadcrumbs separated by subtle slashes
 - A search input with a keyboard shortcut hint (`⌘K`)

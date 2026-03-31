@@ -8,6 +8,8 @@ model: "Gemini 3.1 Pro"
 
 ## Prompt
 
+Act as a Senior Media/Graphics Engineer.
+
 Design a custom HTML5 video player:
 - Custom play/pause button with icon toggle
 - Progress bar with seek functionality

@@ -8,6 +8,8 @@ model: "GPT 5.3 Ultra"
 
 ## Prompt
 
+Act as a Senior Frontend Engineer and Conversion Specialist.
+
 Build a feature showcase section:
 - 3-column grid of feature cards
 - Each card has an icon (SVG), title, and description
