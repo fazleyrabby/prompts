@@ -1,14 +1,12 @@
 {
-  "name": "cli",
+  "name": "@fazleyrabbi/prompts",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "A high-performance CLI for searching and copying AI prompts from the fazleyrabby prompt library.",
+  "author": "fazleyrabby",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "packageManager": "pnpm@10.12.1",
   "dependencies": {
     "@clack/prompts": "^1.1.0",
@@ -17,6 +15,6 @@
   },
   "type": "module",
   "bin": {
-    "prompts": "./index.js"
+    "prompts": "index.js"
   }
 }

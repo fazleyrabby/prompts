@@ -65,7 +65,7 @@ const { title, description, tags, preview, model, slug, promptText } = Astro.pro
           {model}
         </span>
         <div class="relative z-20 shrink-0">
-          <CopyButton promptText={promptText} fullWidth={false} />
+          <CopyButton promptText={promptText} slug={slug} fullWidth={false} />
         </div>
       </div>
     </div>

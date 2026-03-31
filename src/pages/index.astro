@@ -133,6 +133,26 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
         <span class="text-xs text-[var(--text-secondary)]">Active:</span>
       </div>
 
+      <!-- Top Prompts Section -->
+      <div id="topPromptsSection" class="hidden mb-10 pb-10 border-b border-[var(--border)]">
+        <h2 class="text-xl font-semibold font-heading tracking-tight flex items-center gap-2 mb-5 text-[var(--text-primary)]">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          Most Used
+        </h2>
+        <div id="topPromptGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+        </div>
+      </div>
+
+      <!-- Grid Title (shown when top prompts exist) -->
+      <h2 id="allPromptsHeader" class="hidden text-xl font-semibold font-heading tracking-tight flex items-center gap-2 mb-5 text-[var(--text-primary)]">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--text-secondary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+        </svg>
+        Library
+      </h2>
+
       <!-- Grid -->
       <div id="promptGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
         {prompts.map((prompt) => (
@@ -397,6 +417,53 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
     }
 
     renderPage();
+    updateTopPrompts();
+  }
+
+  function updateTopPrompts() {
+    const topSection = document.getElementById('topPromptsSection');
+    const libHeader = document.getElementById('allPromptsHeader');
+    const topGrid = document.getElementById('topPromptGrid');
+    
+    // Check if defaults are active
+    const isFiltered = activeCategory !== 'all' || activeTags.length > 0 || searchQuery !== '' || showFavoritesOnly;
+    
+    // Parse usage
+    const usage = JSON.parse(localStorage.getItem('prompt_usage') || '{}');
+    const sortedUsage = Object.entries(usage)
+      .sort((a, b) => (b[1] as number) - (a[1] as number))
+      .filter(([slug, count]) => (count as number) > 0);
+
+    if (isFiltered || sortedUsage.length === 0) {
+      if (topSection) topSection.classList.add('hidden');
+      if (libHeader) libHeader.classList.add('hidden');
+      if (topGrid) topGrid.innerHTML = '';
+      return;
+    }
+
+    if (topSection) topSection.classList.remove('hidden');
+    if (libHeader) libHeader.classList.remove('hidden');
+    if (topGrid) {
+      topGrid.innerHTML = '';
+      const topSlugs = sortedUsage.slice(0, 4).map(s => s[0]);
+      
+      const promptGrid = document.getElementById('promptGrid');
+      if (promptGrid) {
+         topSlugs.forEach(slug => {
+            const card = promptGrid.querySelector(`[data-slug="${slug}"]`);
+            if (card) {
+               const cloned = card.cloneNode(true) as HTMLElement;
+               cloned.style.display = 'block'; // force visible
+               topGrid.appendChild(cloned);
+            }
+         });
+         
+         // Re-bind listeners for the newly cloned buttons
+         setTimeout(() => {
+           document.dispatchEvent(new Event('astro:page-load'));
+         }, 50);
+      }
+    }
   }
 
   // Search
@@ -531,5 +598,10 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
         }
       }
     }
+  });
+
+  // Re-render top prompts when usage analytics update across components
+  window.addEventListener('prompt_usage_updated', () => {
+    updateTopPrompts();
   });
 </script>

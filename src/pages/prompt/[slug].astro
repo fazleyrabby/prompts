@@ -87,7 +87,7 @@ const relatedPrompts = allPrompts
             </svg>
             Share
           </button>
-          <CopyButton promptText={promptText} fullWidth={false} />
+          <CopyButton promptText={promptText} slug={entry.slug} fullWidth={false} />
         </div>
       </div>
       
@@ -153,7 +153,7 @@ const relatedPrompts = allPrompts
           </a>
           <!-- Mobile Copy -->
           <div class="sm:hidden">
-            <CopyButton promptText={promptText} fullWidth={false} />
+            <CopyButton promptText={promptText} slug={entry.slug} fullWidth={false} />
           </div>
         </div>
       </div>
@@ -164,7 +164,7 @@ const relatedPrompts = allPrompts
         </div>
         
         <div class="absolute top-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block">
-          <CopyButton promptText={promptText} fullWidth={false} />
+          <CopyButton promptText={promptText} slug={entry.slug} fullWidth={false} />
         </div>
       </div>
     </section>
@@ -172,12 +172,17 @@ const relatedPrompts = allPrompts
     <!-- Notes Section -->
     {noteText.trim() && (
       <section class="mb-10 pt-6 border-t border-[var(--border)]">
-        <h2 class="text-lg font-medium font-heading tracking-tight flex items-center gap-2 mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--accent-end)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          Notes
-        </h2>
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-medium font-heading tracking-tight flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--accent-end)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Notes
+          </h2>
+          <div class="relative z-10 shrink-0">
+            <CopyButton promptText={noteText} slug={`${entry.slug}-notes`} label="Copy Notes" fullWidth={false} />
+          </div>
+        </div>
         <div class="prose prose-invert prose-p:text-[var(--text-secondary)] prose-li:text-[var(--text-secondary)] prose-a:text-[var(--accent-start)] font-body markdown-content">
           <Content />
         </div>
@@ -236,19 +241,20 @@ const relatedPrompts = allPrompts
     line-height: 1.8;
   }
 
-  /* Hide the original Prompt section from Content, show only Notes */
-  .markdown-content :global(h2:first-of-type),
-  .markdown-content :global(h2:first-of-type + p),
-  .markdown-content :global(h2:first-of-type ~ p:not(h2#notes ~ p)),
-  .markdown-content :global(h2:first-of-type ~ ul:not(h2#notes ~ ul)) {
-     display: none;
+  /* Hide all content until the ## Notes section */
+  .markdown-content > :global(*) {
+     display: none !important;
   }
-  .markdown-content :global(h2#notes),
-  .markdown-content :global(h2#notes ~ *) {
-     display: block;
+  
+  /* Show only content after the Notes header (Astro generates id="notes") */
+  .markdown-content > :global(h2#notes ~ *) {
+     display: block !important;
+     margin-top: 1rem;
   }
-  .markdown-content :global(h2#notes) {
-     display: none; /* We already have our own Notes heading */
+
+  /* Ensure the redundant header itself stays hidden */
+  .markdown-content > :global(h2#notes) {
+     display: none !important;
   }
   .markdown-content :global(ul) { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
   .markdown-content :global(p) { margin-bottom: 1rem; }

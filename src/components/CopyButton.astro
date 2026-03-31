@@ -1,5 +1,5 @@
 ---
-const { promptText, fullWidth = false } = Astro.props;
+const { promptText, slug, label = "Copy Prompt", fullWidth = false } = Astro.props;
 ---
 
 <button
@@ -10,8 +10,9 @@ const { promptText, fullWidth = false } = Astro.props;
     { "px-2.5 py-1.5 h-8": !fullWidth }
   ]}
   data-prompt={promptText}
+  data-slug={slug}
 >
-  <span class="copy-text whitespace-nowrap">Copy Prompt</span>
+  <span class="copy-text whitespace-nowrap">{label}</span>
   <span class="copied-text absolute inset-0 flex items-center justify-center opacity-0 scale-95 transition-all whitespace-nowrap">Copied ✓</span>
 </button>
 
@@ -76,6 +77,17 @@ const { promptText, fullWidth = false } = Astro.props;
         try {
           await navigator.clipboard.writeText(promptText);
           newBtn.classList.add('copied');
+          
+          // Usage Analytics
+          const promptSlug = newBtn.getAttribute('data-slug');
+          if (promptSlug) {
+            const usage = JSON.parse(localStorage.getItem('prompt_usage') || '{}');
+            usage[promptSlug] = (usage[promptSlug] || 0) + 1;
+            localStorage.setItem('prompt_usage', JSON.stringify(usage));
+            // Dispatch event so other components can react
+            window.dispatchEvent(new Event('prompt_usage_updated'));
+          }
+
           if (typeof (window as any).showToast === 'function') {
             (window as any).showToast('Prompt copied to clipboard!', 'success');
           }

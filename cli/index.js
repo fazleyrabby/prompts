@@ -25,7 +25,7 @@ async function fetchPrompts() {
 
 async function main() {
   console.clear();
-  intro(pc.bgBlue(pc.white(' 🚀 @fazleyrabby/prompts CLI ')));
+  intro(pc.bgBlue(pc.white(' 🚀 @fazleyrabbi/prompts CLI ')));
 
   const allPrompts = await fetchPrompts();
 
