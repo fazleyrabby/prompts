@@ -18,11 +18,11 @@ import '../styles/global.css';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   </head>
-  <body class="bg-[var(--bg)] text-[var(--text-primary)] font-body min-h-screen flex flex-col antialiased selection:bg-[var(--accent-start)] selection:text-white pb-12">
-    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-10 fade-in">
+  <body class="bg-[var(--bg)] text-[var(--text-primary)] font-body min-h-screen flex flex-col antialiased selection:bg-[var(--accent-start)] selection:text-white pb-6">
+    <main class="flex-grow max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 pt-6 fade-in">
       <slot />
     </main>
-    <footer class="mt-20 py-8 border-t border-[var(--border)] text-center text-[var(--text-secondary)] font-mono text-sm max-w-7xl mx-auto w-full px-4">
+    <footer class="mt-12 py-6 border-t border-[var(--border)] text-center text-[var(--text-secondary)] font-mono text-sm max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8">
       <p>&copy; {new Date().getFullYear()} Prompt Library. Built for developers.</p>
     </footer>
   </body>

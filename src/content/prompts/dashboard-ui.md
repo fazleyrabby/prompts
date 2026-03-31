@@ -3,7 +3,7 @@ title: "Developer Dashboard Header"
 description: "Dense top navigation for dev tools"
 category: "navigation"
 tags: ["header", "dense", "breadcrumbs"]
-model: "gemini-1.5-pro"
+model: "Gemini 3.1 Pro"
 ---
 
 ## Prompt

@@ -3,7 +3,7 @@ title: "Glassmorphic Settings Card"
 description: "A compact glass-effect settings panel for a dashboard"
 category: "card"
 tags: ["ui", "glassmorphism", "settings"]
-model: "gpt-4-turbo"
+model: "GPT 5.3 Ultra"
 ---
 
 ## Prompt

@@ -3,7 +3,7 @@ title: "Stripe-style Animated Hero"
 description: "Modern SaaS hero with gradients and motion"
 category: "hero"
 tags: ["stripe", "animation", "gradient"]
-model: "claude-3-opus"
+model: "Claude 4.6 Opus"
 ---
 
 ## Prompt

@@ -5,14 +5,14 @@ const { promptText, fullWidth = false } = Astro.props;
 <button
   type="button"
   class:list={[
-    "copy-btn relative inline-flex items-center justify-center rounded-md font-mono text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[var(--accent-start)] focus:ring-offset-2 focus:ring-offset-[var(--bg)] transition-all",
+    "copy-btn relative inline-flex items-center justify-center rounded-md font-mono text-sm font-medium whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[var(--accent-start)] focus:ring-offset-2 focus:ring-offset-[var(--bg)] transition-all",
     { "w-full sm:w-auto h-11 px-6": fullWidth },
-    { "px-3 py-1.5 min-w-[100px] h-8": !fullWidth }
+    { "px-2.5 py-1.5 h-8": !fullWidth }
   ]}
   data-prompt={promptText}
 >
-  <span class="copy-text">Copy Prompt</span>
-  <span class="copied-text absolute inset-0 flex items-center justify-center opacity-0 scale-95 transition-all">Copied ✓</span>
+  <span class="copy-text whitespace-nowrap">Copy Prompt</span>
+  <span class="copied-text absolute inset-0 flex items-center justify-center opacity-0 scale-95 transition-all whitespace-nowrap">Copied ✓</span>
 </button>
 
 <style>

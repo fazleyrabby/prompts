@@ -41,11 +41,11 @@ const { title, description, category, tags, preview, model, slug, promptText } =
     <div class="flex-grow"></div>
 
     <!-- Bottom Row: Model Badge & Copy Button -->
-    <div class="flex items-center justify-between mt-auto">
-      <span class="model-badge text-[10px] uppercase font-mono tracking-wider sm:text-xs">
+    <div class="flex items-center justify-between mt-auto gap-2">
+      <span class="model-badge text-[9px] uppercase font-mono tracking-wider sm:text-[10px] whitespace-nowrap">
         {model}
       </span>
-      <div class="relative z-20">
+      <div class="relative z-20 shrink-0">
         <CopyButton promptText={promptText} fullWidth={false} />
       </div>
     </div>
