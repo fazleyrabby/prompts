@@ -266,7 +266,6 @@ const relatedPrompts = allPrompts
     
     const inputs = document.querySelectorAll('.variable-input');
     const codeBlock = document.querySelector('.code-wrapper code');
-    const copyBtns = document.querySelectorAll('.copy-btn');
     
     if (!codeBlock) return;
     
@@ -295,18 +294,12 @@ const relatedPrompts = allPrompts
       
       codeBlock.innerHTML = newHTML;
       
-      copyBtns.forEach(btn => {
-        if (btn.getAttribute('data-original-prompt') === initialPromptText) {
-           btn.setAttribute('data-prompt', newText);
-        }
+      // Query live DOM to avoid detached Node issues from CopyButton clone logic
+      const mainCopyBtns = document.querySelectorAll('header .copy-btn, section.mb-10 .copy-btn');
+      mainCopyBtns.forEach(btn => {
+         btn.setAttribute('data-prompt', newText);
       });
     }
-
-    copyBtns.forEach(btn => {
-       if (btn.getAttribute('data-prompt') === initialPromptText) {
-          btn.setAttribute('data-original-prompt', initialPromptText);
-       }
-    });
     
     inputs.forEach(input => {
       // Remove old listeners to avoid duplicates if re-init happens
