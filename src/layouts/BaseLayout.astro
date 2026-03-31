@@ -14,7 +14,26 @@ import CommandPalette from '../components/CommandPalette.astro';
     <meta name="generator" content={Astro.generator} />
     <title>{title ? `${title} | Prompt Library` : 'Prompt Library'}</title>
     <meta name="description" content={description || "A minimal, blazing-fast prompt library for developers."} />
+    <meta name="keywords" content="prompts, ai, developer prompts, chatgpt library, claude prompts, prompter, fazleyrabbi" />
+    <meta name="author" content="fazleyrabbi" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href={`https://prompts.fazleyrabbi.xyz${Astro.url.pathname}`} />
+
+    <!-- Open Graph / Meta -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={`https://prompts.fazleyrabbi.xyz${Astro.url.pathname}`} />
+    <meta property="og:title" content={title ? `${title} | Prompt Library` : 'Prompt Library'} />
+    <meta property="og:description" content={description || "A minimal, blazing-fast prompt library for developers."} />
+    <meta property="og:site_name" content="Prompt Library" />
     
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={`https://prompts.fazleyrabbi.xyz${Astro.url.pathname}`} />
+    <meta property="twitter:title" content={title ? `${title} | Prompt Library` : 'Prompt Library'} />
+    <meta property="twitter:description" content={description || "A minimal, blazing-fast prompt library for developers."} />
+
     <!-- Preconnect to Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,7 +47,11 @@ import CommandPalette from '../components/CommandPalette.astro';
       <div class="flex items-center justify-center gap-4">
         <p>&copy; {new Date().getFullYear()} Prompt Library</p>
         <span class="opacity-30">·</span>
+        <a href="https://fazleyrabbi.xyz" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--text-primary)] transition-colors font-medium">fazleyrabbi.xyz</a>
+        <span class="opacity-30">·</span>
         <a href="/changelog" class="hover:text-[var(--text-primary)] transition-colors">Changelog</a>
+        <span class="opacity-30">·</span>
+        <a href="https://www.npmjs.com/package/@fazleyrabbi/prompts" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--text-primary)] transition-colors">CLI (NPM)</a>
       </div>
     </footer>
     <Toast />

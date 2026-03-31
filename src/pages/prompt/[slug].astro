@@ -53,12 +53,18 @@ const relatedPrompts = allPrompts
 >
   <div class="max-w-4xl mx-auto">
     <!-- Breadcrumbs -->
-    <nav class="flex items-center gap-2 text-sm font-mono mb-6 text-[var(--text-secondary)]">
-      <a href="/" class="hover:text-[var(--text-primary)] transition-colors">Library</a>
+    <nav class="flex items-center gap-2 text-xs font-mono mb-6 text-[var(--text-secondary)]">
+      <a href="/" class="hover:text-[var(--text-primary)] transition-colors flex items-center gap-1.5 border border-[var(--border)] px-2 py-0.5 rounded-md hover:bg-[var(--surface)] transition-all">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-[var(--accent-start)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="4 17 10 11 4 5"></polyline>
+          <line x1="12" y1="19" x2="20" y2="19"></line>
+        </svg>
+        Library
+      </a>
       <span class="opacity-30">/</span>
-      <a href={`/?category=${entry.data.category}`} class="capitalize hover:text-[var(--text-primary)] transition-colors">{entry.data.category}</a>
+      <a href={`/?category=${entry.data.category}`} class="capitalize hover:text-[var(--text-primary)] transition-colors border border-[var(--border)] px-2 py-0.5 rounded-md hover:bg-[var(--surface)] transition-all">{entry.data.category}</a>
       <span class="opacity-30">/</span>
-      <span class="text-[var(--text-primary)] truncate max-w-xs">{entry.data.title}</span>
+      <span class="text-[var(--text-primary)] truncate max-w-[120px] sm:max-w-xs">{entry.data.title}</span>
     </nav>
 
     <!-- Header -->

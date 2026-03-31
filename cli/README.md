@@ -16,7 +16,7 @@ npx @fazleyrabbi/prompts
 
 ## Usage
 
-1. Run the command: `prompts` (if installed globally) or `npx @fazleyrabby/prompts`
+1. Run the command: `prompts` (if installed globally) or `npx @fazleyrabbi/prompts`
 2. **Search:** Use fuzzy search to find your prompt.
 3. **Customize:** If the prompt has variables like `{{FRAMEWORK}}`, the CLI will ask you for values on the fly.
 4. **Copy:** Once finished, it copies the final prompt directly to your clipboard!
