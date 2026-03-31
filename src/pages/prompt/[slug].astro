@@ -26,6 +26,11 @@ const noteText = parts[1] || '';
 // Clean the extracted prompt: remove the "## Prompt" heading if it exists
 promptText = promptText.replace(/## Prompt\s+/, '').trim();
 
+// Extract variables
+const variableRegex = /\{\{([A-Z0-9_]+)\}\}/g;
+const matchItr = promptText.matchAll(variableRegex);
+const variables = [...new Set(Array.from(matchItr, m => m[1]))];
+
 // Related prompts: same category or overlapping tags, max 4
 const relatedPrompts = allPrompts
   .filter(p => p.slug !== entry.slug)
@@ -98,6 +103,34 @@ const relatedPrompts = allPrompts
     </header>
 
     <div class="h-px bg-[var(--border)] w-full mb-8"></div>
+
+    <!-- Interactive Variables Section -->
+    {variables.length > 0 && (
+      <div class="mb-8 p-5 bg-[var(--surface)] border border-[var(--border)] rounded-xl relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-[var(--accent-start)]/5 to-transparent pointer-events-none"></div>
+        <div class="relative z-10">
+          <h3 class="text-sm font-semibold mb-4 flex items-center gap-2 font-heading tracking-tight">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[var(--accent-start)]" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+            </svg>
+            Customize Variables
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="variable-inputs">
+            {variables.map(v => (
+              <div>
+                <label class="block text-[11px] font-mono uppercase tracking-wider text-[var(--text-secondary)] mb-1.5 pl-1">{v.replace(/_/g, ' ')}</label>
+                <input 
+                  type="text" 
+                  placeholder={`Enter ${v.toLowerCase()}...`}
+                  data-var={v}
+                  class="variable-input w-full bg-[#0d121c] border border-[var(--border)] rounded-lg px-3.5 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--accent-start)] focus:ring-1 focus:ring-[var(--accent-start)]/50 focus:outline-none transition-all placeholder:text-[var(--text-secondary)]/50 font-medium"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )}
 
     <!-- Prompt Section -->
     <section class="mb-10">
@@ -224,4 +257,67 @@ const relatedPrompts = allPrompts
       }
     }
   });
+</script>
+
+<!-- Interactive Variables Client Script -->
+<script define:vars={{ initialPromptText: promptText, variables }}>
+  function initInteractiveVars() {
+    if (!variables || variables.length === 0) return;
+    
+    const inputs = document.querySelectorAll('.variable-input');
+    const codeBlock = document.querySelector('.code-wrapper code');
+    const copyBtns = document.querySelectorAll('.copy-btn');
+    
+    if (!codeBlock) return;
+    
+    // We only need to store the HTML once
+    if (!window._originalCodeHTML) {
+      window._originalCodeHTML = codeBlock.innerHTML;
+    }
+    const originalHTML = window._originalCodeHTML;
+    
+    function updatePrompt() {
+      let newHTML = originalHTML;
+      let newText = initialPromptText;
+      
+      inputs.forEach(input => {
+        const varName = input.getAttribute('data-var');
+        if (!varName) return;
+        
+        const val = input.value;
+        const replaceText = val ? val : `{{${varName}}}`;
+        
+        const regex = new RegExp(`\\{\\{${varName}\\}\\}`, 'g');
+        newHTML = newHTML.replace(regex, `<span class="text-[var(--text-primary)] font-semibold bg-[var(--accent-start)]/20 px-1 py-0.5 rounded ring-1 ring-[var(--accent-start)]/30 mx-px">${replaceText}</span>`);
+        
+        newText = newText.replace(regex, replaceText);
+      });
+      
+      codeBlock.innerHTML = newHTML;
+      
+      copyBtns.forEach(btn => {
+        if (btn.getAttribute('data-original-prompt') === initialPromptText) {
+           btn.setAttribute('data-prompt', newText);
+        }
+      });
+    }
+
+    copyBtns.forEach(btn => {
+       if (btn.getAttribute('data-prompt') === initialPromptText) {
+          btn.setAttribute('data-original-prompt', initialPromptText);
+       }
+    });
+    
+    inputs.forEach(input => {
+      // Remove old listeners to avoid duplicates if re-init happens
+      input.removeEventListener('input', updatePrompt);
+      input.addEventListener('input', updatePrompt);
+    });
+    
+    // Trigger once on init to highlight the brackets initially
+    updatePrompt();
+  }
+
+  initInteractiveVars();
+  document.addEventListener('astro:page-load', initInteractiveVars);
 </script>

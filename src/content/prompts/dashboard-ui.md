@@ -10,7 +10,7 @@ model: "Gemini 3.1 Pro"
 
 Act as a Senior Frontend Developer specializing in accessible UI.
 
-Build a compact top navigation bar for a developer-focused tool with:
+Build a compact top navigation bar for a developer-focused tool with {{FRAMEWORK}} and {{CSS_TOOL}} for {{TOOL_NAME}}:
 - Monospace breadcrumbs separated by subtle slashes
 - A search input with a keyboard shortcut hint (`⌘K`)
 - An avatar and dropdown trigger on the far right
