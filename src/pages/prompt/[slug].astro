@@ -141,9 +141,20 @@ const relatedPrompts = allPrompts
           </svg>
           Prompt
         </h2>
-        <!-- Copy Button (Mobile) -->
-        <div class="relative z-10 sm:hidden">
-          <CopyButton promptText={promptText} fullWidth={false} />
+        <!-- Run Actions -->
+        <div class="relative z-10 flex items-center gap-1.5 sm:gap-2">
+          <a href={`https://chatgpt.com/?q=${encodeURIComponent(promptText)}`} target="_blank" rel="noopener noreferrer" class="chatgpt-link hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 h-8 rounded-md font-mono text-[10px] sm:text-xs font-medium border border-[var(--border)] text-[var(--text-secondary)] hover:text-white hover:bg-[#10a37f]/20 hover:border-[#10a37f]/50 transition-all">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.073zm-9.022 12.1081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-2.1463zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.8956zm16.0993 3.8558L12.5973 8.3829a.071.071 0 0 1-.0332-.0615V2.7388a4.4992 4.4992 0 0 1 6.1408 2.1463 4.4708 4.4708 0 0 1 .5346 3.0137l-.142-.0852-4.783-2.7582a.7712.7712 0 0 0-.7806 0l-5.8428 3.3685v-2.3324z"></path></svg>
+            ChatGPT
+          </a>
+          <a href={`https://claude.ai/new?q=${encodeURIComponent(promptText)}`} target="_blank" rel="noopener noreferrer" class="claude-link hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 h-8 rounded-md font-mono text-[10px] sm:text-xs font-medium border border-[var(--border)] text-[var(--text-secondary)] hover:text-[#d97757] hover:bg-[#d97757]/10 hover:border-[#d97757]/50 transition-all">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 673 862" fill="currentColor"><path d="M371.74 199.112c-15.01-16.143-34.18-24.237-57.531-24.237-14.73 0-28.73 3.486-42.064 10.457-13.332 6.994-25.044 16.711-35.132 29.13l-45.748-43.766c14.24-17.656 31.066-31.543 50.472-41.673 19.381-10.155 40.231-15.247 62.532-15.247 37.892 0 71.073 13.064 99.516 39.208 28.468 26.12 42.69 60.106 42.69 101.97v384.722L371.74 621.5ZM139.112 400.32v73.742h222.845V400.32zM371.74 543.085v78.411H61.025v-78.41H371.74Z"/><path d="M197.632 748.257H61.025V400.316h58.115v276.012h78.492zM538.158 522.699c-29.28 29.255-64.717 43.896-106.326 43.896-22.923 0-44.59-4.321-65.01-12.986-20.444-8.688-38.303-21.01-53.593-36.98l44.316-43.26c21.848 21.053 47.935 31.564 78.272 31.564 24.646 0 45.312-8.527 61.983-25.59 16.697-17.039 25.048-38.16 25.048-63.344V126.98h78.491V415.99c0 40.73-21.08 76.293-63.181 106.7Z"/></svg>
+            Claude
+          </a>
+          <!-- Mobile Copy -->
+          <div class="sm:hidden">
+            <CopyButton promptText={promptText} fullWidth={false} />
+          </div>
         </div>
       </div>
       
@@ -295,10 +306,16 @@ const relatedPrompts = allPrompts
       codeBlock.innerHTML = newHTML;
       
       // Query live DOM to avoid detached Node issues from CopyButton clone logic
-      const mainCopyBtns = document.querySelectorAll('header .copy-btn, section.mb-10 .copy-btn');
+      const mainCopyBtns = document.querySelectorAll('header .copy-btn, section.mb-10 .copy-btn, .sm\\:hidden .copy-btn');
       mainCopyBtns.forEach(btn => {
          btn.setAttribute('data-prompt', newText);
       });
+      
+      const chatgptBtns = document.querySelectorAll('.chatgpt-link');
+      chatgptBtns.forEach(btn => btn.setAttribute('href', `https://chatgpt.com/?q=${encodeURIComponent(newText)}`));
+      
+      const claudeBtns = document.querySelectorAll('.claude-link');
+      claudeBtns.forEach(btn => btn.setAttribute('href', `https://claude.ai/new?q=${encodeURIComponent(newText)}`));
     }
     
     inputs.forEach(input => {
