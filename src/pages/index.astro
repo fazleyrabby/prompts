@@ -6,7 +6,8 @@ import PromptCard from '../components/PromptCard.astro';
 // Fetch all prompts
 const prompts = await getCollection('prompts');
 
-// Extract unique tags for categories
+// Extract unique categories and tags
+const allCategories = [...new Set(prompts.map(p => p.data.category))].sort();
 const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
 ---
 
@@ -14,152 +15,287 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
   title="Home" 
   description="A minimal, blazing-fast prompt library for developers."
 >
-  <!-- Interactive Header with Search -->
-  <header class="flex flex-col mb-8 gap-6">
-    <div class="flex items-center justify-between border-b border-[var(--border)] pb-4">
-      <h1 class="text-2xl font-semibold font-heading tracking-tight text-[var(--text-primary)]">
-        Prompt Library
-      </h1>
-      <span class="text-sm text-[var(--text-secondary)] hidden sm:block">
-        {prompts.length} prompts available
-      </span>
-    </div>
-
-    <div class="flex flex-col gap-4">
-      <!-- Search Input -->
-      <div class="relative group max-w-2xl">
-        <div class="absolute -inset-0.5 bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)] rounded-lg blur opacity-10 group-focus-within:opacity-30 transition duration-500"></div>
-        <div class="relative flex items-center bg-[var(--surface-raised)] border border-[var(--border)] rounded-lg px-4 py-2.5">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-[var(--text-secondary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  <div class="flex gap-6">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="hidden lg:flex flex-col gap-6 w-64 shrink-0 sticky top-6 self-start max-h-[calc(100vh-4rem)] overflow-y-auto pr-2">
+      
+      <!-- Search -->
+      <div class="relative group">
+        <div class="absolute -inset-0.5 bg-gradient-to-r from-[var(--accent-start)] to-[var(--accent-end)] rounded-lg blur opacity-10 group-focus-within:opacity-30 transition duration-500"></div>
+        <div class="relative flex items-center bg-[var(--surface)] border border-[var(--border)] rounded-lg px-3 py-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-[var(--text-secondary)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
           <input 
             id="searchInput"
             type="text" 
-            placeholder="Search by title, tags, or AI model..." 
+            placeholder="Search prompts..." 
             class="bg-transparent border-none focus:outline-none w-full text-[var(--text-primary)] placeholder-[var(--text-secondary)] text-sm"
           />
         </div>
       </div>
 
       <!-- Categories -->
-      <div class="flex flex-wrap gap-2 items-center" id="categoryFilters">
-        <button 
-          data-category="all"
-          class="category-btn active px-3 py-1 rounded-md text-xs font-medium border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-elevated)] transition-all"
-        >
-          All
-        </button>
-        {allTags.map(tag => (
+      <div>
+        <h3 class="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-3">Categories</h3>
+        <div class="flex flex-col gap-1" id="categoryFilters">
           <button 
-            data-category={tag}
-            class="category-btn px-3 py-1 rounded-md text-xs font-medium border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--text-secondary)] transition-all"
+            data-category="all"
+            class="category-btn active flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-left transition-all"
           >
-            {tag}
+            <span>All Prompts</span>
+            <span class="text-xs font-mono opacity-60">{prompts.length}</span>
           </button>
+          {allCategories.map(cat => {
+            const count = prompts.filter(p => p.data.category === cat).length;
+            return (
+              <button 
+                data-category={cat}
+                class="category-btn flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-left text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] transition-all"
+              >
+                <span class="capitalize">{cat}</span>
+                <span class="text-xs font-mono opacity-60">{count}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <!-- Tags -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Tags</h3>
+          <button 
+            id="clearTags"
+            class="hidden text-[10px] font-medium text-[var(--accent-start)] hover:underline transition-all"
+          >
+            Clear
+          </button>
+        </div>
+        <div class="flex flex-wrap gap-1.5" id="tagFilters">
+          {allTags.map(tag => (
+            <button 
+              data-tag={tag}
+              class="tag-btn px-2.5 py-1 rounded-full text-[10px] font-medium border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] transition-all"
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <!-- Sidebar Footer -->
+      <div class="mt-auto pt-4 border-t border-[var(--border)]">
+        <p class="text-[10px] text-[var(--text-secondary)] font-mono">
+          {prompts.length} prompts &bull; {allCategories.length} categories
+        </p>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 min-w-0">
+      <!-- Header Row -->
+      <header class="flex items-center justify-between mb-6 border-b border-[var(--border)] pb-4">
+        <div class="flex items-center gap-3">
+          <!-- Mobile Sidebar Toggle -->
+          <button id="sidebarToggle" class="lg:hidden p-2 rounded-md border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface)] transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
+            </svg>
+          </button>
+          <h1 class="text-2xl font-semibold font-heading tracking-tight text-[var(--text-primary)]">
+            Prompt Library
+          </h1>
+        </div>
+        <div class="flex items-center gap-3">
+          <span id="resultCount" class="text-sm text-[var(--text-secondary)] hidden sm:block">
+            {prompts.length} prompts
+          </span>
+        </div>
+      </header>
+
+      <!-- Active Filters Bar -->
+      <div id="activeFilters" class="hidden flex-wrap gap-2 items-center mb-4">
+        <span class="text-xs text-[var(--text-secondary)]">Active:</span>
+      </div>
+
+      <!-- Grid -->
+      <div id="promptGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+        {prompts.map((prompt) => (
+          <div 
+            class="prompt-card-wrapper transition-all duration-200" 
+            data-tags={prompt.data.tags.join(',')} 
+            data-category={prompt.data.category}
+            data-title={prompt.data.title.toLowerCase()} 
+            data-desc={prompt.data.description.toLowerCase()} 
+            data-model={prompt.data.model.toLowerCase()}
+          >
+            <PromptCard 
+              title={prompt.data.title}
+              description={prompt.data.description}
+              category={prompt.data.category}
+              tags={prompt.data.tags}
+              preview={prompt.data.preview}
+              model={prompt.data.model}
+              slug={prompt.slug}
+              promptText={prompt.body.replace(/## Prompt\s+/, '').split('## Notes')[0].trim()}
+            />
+          </div>
         ))}
       </div>
-    </div>
-  </header>
-
-  <!-- Grid -->
-  <div id="promptGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-    {prompts.map((prompt) => (
-      <div 
-        class="prompt-card-wrapper transition-all duration-300 transform" 
-        data-tags={prompt.data.tags.join(',')} 
-        data-title={prompt.data.title.toLowerCase()} 
-        data-desc={prompt.data.description.toLowerCase()} 
-        data-model={prompt.data.model.toLowerCase()}
-      >
-        <PromptCard 
-          title={prompt.data.title}
-          description={prompt.data.description}
-          category={prompt.data.category}
-          tags={prompt.data.tags}
-          preview={prompt.data.preview}
-          model={prompt.data.model}
-          slug={prompt.slug}
-          promptText={prompt.body.replace(/## Prompt\s+/, '').split('## Notes')[0].trim()}
-        />
+      
+      <!-- Pagination -->
+      <div id="pagination" class="flex items-center justify-center gap-2 mt-10 pb-4">
+        <button 
+          id="prevPage"
+          class="p-2 rounded-md border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface)] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+        </button>
+        <div id="pageNumbers" class="flex items-center gap-1"></div>
+        <button 
+          id="nextPage"
+          class="p-2 rounded-md border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface)] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+          </svg>
+        </button>
       </div>
-    ))}
-  </div>
-  
-  <!-- Pagination -->
-  <div id="pagination" class="flex items-center justify-center gap-2 mt-12 pb-8">
-    <button 
-      id="prevPage"
-      class="p-2 rounded-md border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-raised)] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-      </svg>
-    </button>
-    <div id="pageNumbers" class="flex items-center gap-2"></div>
-    <button 
-      id="nextPage"
-      class="p-2 rounded-md border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-raised)] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-      </svg>
-    </button>
-  </div>
-  
-  <div id="noResults" class="hidden text-[var(--text-secondary)] text-center py-20 border border-[var(--border)] border-dashed rounded-lg">
-    <p class="mb-2 text-lg">No matches found</p>
-    <p class="text-sm">Try using different keywords or categories.</p>
+
+      <!-- No Results -->
+      <div id="noResults" class="hidden text-[var(--text-secondary)] text-center py-20 border border-[var(--border)] border-dashed rounded-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mx-auto mb-3 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <p class="mb-2 text-lg">No matches found</p>
+        <p class="text-sm">Try using different keywords or categories.</p>
+      </div>
+    </div>
   </div>
 </BaseLayout>
 
 <style>
   .category-btn.active {
-    @apply border-[var(--accent-primary)] text-[var(--accent-primary)] bg-[var(--accent-primary)]/10;
+    background-color: var(--surface);
+    color: var(--text-primary);
+    border-left: 2px solid var(--accent-start);
+  }
+
+  .tag-btn.active {
+    border-color: var(--accent-start);
+    color: var(--accent-start);
+    background-color: color-mix(in srgb, var(--accent-start) 12%, transparent);
+  }
+
+  /* Mobile sidebar overlay */
+  #sidebar.mobile-open {
+    display: flex !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 50;
+    width: 280px;
+    max-height: 100vh;
+    padding: 1.5rem;
+    background-color: var(--bg);
+    border-right: 1px solid var(--border);
+    animation: slideIn 200ms ease-out;
+  }
+
+  #sidebar-overlay {
+    display: none;
+  }
+  #sidebar-overlay.active {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(2px);
+  }
+
+  @keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+  }
+
+  /* Custom scrollbar for sidebar */
+  #sidebar::-webkit-scrollbar {
+    width: 4px;
+  }
+  #sidebar::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 2px;
   }
 </style>
 
 <script>
   const searchInput = document.getElementById('searchInput') as HTMLInputElement;
   const categoryBtns = document.querySelectorAll('.category-btn');
+  const tagBtns = document.querySelectorAll('.tag-btn');
   const promptCards = document.querySelectorAll('.prompt-card-wrapper');
   const noResults = document.getElementById('noResults');
   const pagination = document.getElementById('pagination');
   const pageNumbers = document.getElementById('pageNumbers');
   const prevBtn = document.getElementById('prevPage') as HTMLButtonElement;
   const nextBtn = document.getElementById('nextPage') as HTMLButtonElement;
+  const resultCount = document.getElementById('resultCount');
+  const sidebar = document.getElementById('sidebar');
+  const sidebarToggle = document.getElementById('sidebarToggle');
+  const clearTagsBtn = document.getElementById('clearTags');
 
   const ITEMS_PER_PAGE = 8;
   let activeCategory = 'all';
+  let activeTags: string[] = [];
   let searchQuery = '';
   let currentPage = 1;
   let filteredCards: HTMLElement[] = [];
 
+  // Mobile sidebar
+  const overlay = document.createElement('div');
+  overlay.id = 'sidebar-overlay';
+  document.body.appendChild(overlay);
+
+  sidebarToggle?.addEventListener('click', () => {
+    sidebar?.classList.toggle('mobile-open');
+    overlay.classList.toggle('active');
+  });
+  overlay.addEventListener('click', () => {
+    sidebar?.classList.remove('mobile-open');
+    overlay.classList.remove('active');
+  });
+
   function updatePagination() {
     const totalPages = Math.ceil(filteredCards.length / ITEMS_PER_PAGE);
     
-    // Hide pagination if only one page
     if (totalPages <= 1) {
       pagination?.classList.add('hidden');
     } else {
       pagination?.classList.remove('hidden');
     }
 
-    // Update buttons
-    prevBtn.disabled = currentPage === 1;
-    nextBtn.disabled = currentPage === totalPages;
+    if (prevBtn) prevBtn.disabled = currentPage === 1;
+    if (nextBtn) nextBtn.disabled = currentPage === totalPages;
 
-    // Build page numbers
     if (pageNumbers) {
       pageNumbers.innerHTML = '';
       for (let i = 1; i <= totalPages; i++) {
         const btn = document.createElement('button');
         btn.textContent = i.toString();
-        btn.className = `w-8 h-8 rounded-md text-xs font-medium transition-all ${
-          i === currentPage 
-            ? 'bg-[var(--accent-primary)] text-white' 
-            : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-raised)] border border-[var(--border)]'
-        }`;
+        const isActive = i === currentPage;
+        btn.style.cssText = `
+          width: 32px; height: 32px; border-radius: 6px; 
+          font-size: 12px; font-weight: 500; transition: all 150ms;
+          ${isActive 
+            ? 'background: var(--accent-start); color: white;' 
+            : 'color: var(--text-secondary); border: 1px solid var(--border);'}
+        `;
+        btn.onmouseenter = () => { if (!isActive) btn.style.background = 'var(--surface)'; };
+        btn.onmouseleave = () => { if (!isActive) btn.style.background = 'transparent'; };
         btn.onclick = () => {
           currentPage = i;
           renderPage();
@@ -174,43 +310,47 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
 
-    promptCards.forEach(card => (card as HTMLElement).style.display = 'none');
+    promptCards.forEach(card => {
+      const el = card as HTMLElement;
+      el.style.display = 'none';
+    });
 
     filteredCards.forEach((card, index) => {
       if (index >= startIndex && index < endIndex) {
         card.style.display = 'block';
-        setTimeout(() => {
-          card.style.opacity = '1';
-          card.style.scale = '1';
-        }, 10);
-      } else {
-        card.style.opacity = '0';
-        card.style.scale = '0.95';
       }
     });
+
+    // Update result count
+    if (resultCount) {
+      resultCount.textContent = `${filteredCards.length} prompt${filteredCards.length !== 1 ? 's' : ''}`;
+    }
 
     updatePagination();
   }
 
   function filterPrompts() {
-    currentPage = 1; // Reset to page 1 on search/filter
+    currentPage = 1;
     filteredCards = [];
 
     promptCards.forEach(card => {
-      const htmlCard = card as HTMLElement;
-      const tags = htmlCard.dataset.tags?.split(',') || [];
-      const title = htmlCard.dataset.title || '';
-      const desc = htmlCard.dataset.desc || '';
-      const model = htmlCard.dataset.model || '';
+      const el = card as HTMLElement;
+      const tags = el.dataset.tags?.split(',') || [];
+      const category = el.dataset.category || '';
+      const title = el.dataset.title || '';
+      const desc = el.dataset.desc || '';
+      const model = el.dataset.model || '';
 
-      const matchesCategory = activeCategory === 'all' || tags.includes(activeCategory);
-      const matchesSearch = title.includes(searchQuery) || 
+      const matchesCategory = activeCategory === 'all' || category === activeCategory;
+      const matchesTags = activeTags.length === 0 || activeTags.some(t => tags.includes(t));
+      const matchesSearch = searchQuery === '' ||
+                            title.includes(searchQuery) || 
                             desc.includes(searchQuery) || 
                             model.includes(searchQuery) ||
                             tags.some(tag => tag.toLowerCase().includes(searchQuery));
 
-      if (matchesCategory && matchesSearch) {
-        filteredCards.push(htmlCard);
+      if (matchesCategory && matchesTags && matchesSearch) {
+        filteredCards.push(el);
       }
     });
 
@@ -224,12 +364,13 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
     renderPage();
   }
 
-  // Event Listeners
+  // Search
   searchInput?.addEventListener('input', (e) => {
     searchQuery = (e.currentTarget as HTMLInputElement).value.toLowerCase();
     filterPrompts();
   });
 
+  // Category buttons
   categoryBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       categoryBtns.forEach(b => b.classList.remove('active'));
@@ -239,6 +380,39 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
     });
   });
 
+  // Tag buttons (toggle)
+  function updateClearBtn() {
+    if (activeTags.length > 0) {
+      clearTagsBtn?.classList.remove('hidden');
+    } else {
+      clearTagsBtn?.classList.add('hidden');
+    }
+  }
+
+  tagBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tag = (btn as HTMLElement).dataset.tag || '';
+      btn.classList.toggle('active');
+      
+      if (activeTags.includes(tag)) {
+        activeTags = activeTags.filter(t => t !== tag);
+      } else {
+        activeTags.push(tag);
+      }
+      updateClearBtn();
+      filterPrompts();
+    });
+  });
+
+  // Clear all tags
+  clearTagsBtn?.addEventListener('click', () => {
+    activeTags = [];
+    tagBtns.forEach(btn => btn.classList.remove('active'));
+    updateClearBtn();
+    filterPrompts();
+  });
+
+  // Pagination
   prevBtn?.addEventListener('click', () => {
     if (currentPage > 1) {
       currentPage--;
@@ -256,6 +430,21 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
     }
   });
 
-  // Initial render
+  // Initial render — check URL for ?category= param
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlCategory = urlParams.get('category');
+  
+  if (urlCategory) {
+    // Find and activate the matching category button
+    categoryBtns.forEach(btn => {
+      const cat = (btn as HTMLElement).dataset.category || '';
+      if (cat === urlCategory) {
+        categoryBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeCategory = cat;
+      }
+    });
+  }
+
   filterPrompts();
 </script>
