@@ -63,11 +63,16 @@ async function main() {
              const choice = choices.find(c => c.name === r.item.title);
              return choice;
           }).filter(Boolean);
+        },
+        result(value) {
+          // Find the selected choice object
+          const choice = this.options.choices.find(c => c.name === value);
+          // Return the actual prompt object
+          return choice ? choice.value : null;
         }
       });
 
-      const selectedTitle = await prompt.run();
-      promptChoice = allPrompts.find(p => p.title === selectedTitle);
+      promptChoice = await prompt.run();
     } catch (err) {
       outro(pc.yellow('Exiting... Thanks for using @fazleyrabbi/prompts!'));
       process.exit(0);
