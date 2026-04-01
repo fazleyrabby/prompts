@@ -6,6 +6,12 @@
 
 [Browse Prompts](https://prompts.fazleyrabbi.xyz) · [Changelog](https://prompts.fazleyrabbi.xyz/changelog)
 
+<img width="3144" height="1794" alt="CleanShot 2026-04-01 at 17 16 33@2x" src="https://github.com/user-attachments/assets/1b4804b0-3130-42c4-8690-4ff1ae8c3d55" />
+
+CLI Preview
+<img width="1962" height="1168" alt="CleanShot 2026-04-01 at 17 17 50@2x" src="https://github.com/user-attachments/assets/76a8d536-af78-41f1-a16f-4914715be64f" />
+
+
 </div>
 
 ---
