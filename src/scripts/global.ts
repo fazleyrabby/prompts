@@ -63,8 +63,26 @@ export function setupCopyDelegation() {
     e.preventDefault();
     e.stopPropagation();
     
-    const promptText = btn.getAttribute('data-prompt');
+    let promptText = btn.getAttribute('data-prompt');
     if (!promptText) return;
+
+    // Resolve dynamic variables if within a prompt card
+    const card = btn.closest('.prompt-card');
+    if (card) {
+      const inputs = card.querySelectorAll('.variable-input') as NodeListOf<HTMLInputElement>;
+      if (inputs.length > 0) {
+        let currentPrompt = card.getAttribute('data-original-prompt') || promptText;
+        inputs.forEach(input => {
+          const variable = input.getAttribute('data-variable');
+          const value = input.value.trim();
+          if (variable && value) {
+            const regex = new RegExp(`\\{\\{${variable}\\}\\}`, 'g');
+            currentPrompt = currentPrompt.replace(regex, value);
+          }
+        });
+        promptText = currentPrompt;
+      }
+    }
 
     try {
       await navigator.clipboard.writeText(promptText);
@@ -77,7 +95,11 @@ export function setupCopyDelegation() {
         const usage = JSON.parse(localStorage.getItem('prompt_usage') || '{}');
         usage[promptSlug] = (usage[promptSlug] || 0) + 1;
         localStorage.setItem('prompt_usage', JSON.stringify(usage));
-        window.dispatchEvent(new Event('prompt_usage_updated'));
+        
+        // Use a slight delay for re-rendering so the success state is visible
+        setTimeout(() => {
+          window.dispatchEvent(new Event('prompt_usage_updated'));
+        }, 800);
       }
 
       if (typeof (window as any).showToast === 'function') {
