@@ -5,8 +5,8 @@ import CopyButton from './CopyButton.astro';
 const { title, description, tags, preview, thumbnail, model, slug, promptText, index = 100 } = Astro.props;
 
 // Extract variables from promptText
-const rawVariables = [...new Set(promptText.match(/\{\{([\s\S]+?)\}\}/g) || [])];
-const variables: string[] = rawVariables.map(v => v.replace(/\{\{|\}\}/g, ''));
+const rawVariables = [...new Set(promptText.match(/\{\{([\s\S]+?)\}\}/g) || [])] as string[];
+const variables = rawVariables.map(v => v.replace(/\{\{|\}\}/g, ''));
 ---
 
 <div class="prompt-card group relative flex flex-col overflow-hidden leading-snug w-full max-w-sm mx-auto sm:max-w-none" data-original-prompt={promptText}>
@@ -55,7 +55,10 @@ const variables: string[] = rawVariables.map(v => v.replace(/\{\{|\}\}/g, ''));
     <!-- Code Snippet Preview -->
     <div class="relative bg-[#0d121c] border border-[var(--border)] rounded-md p-3 mb-5 flex-grow overflow-hidden">
       <p class="prompt-preview-text font-mono text-xs text-[var(--text-secondary)] opacity-90 leading-relaxed whitespace-pre-wrap line-clamp-4">
-        {promptText}
+        {promptText.replace(/^---[\s\S]+?---/, '') /* Strip frontmatter */
+                  .split(/#+ (?:Prompt|prompt)/i)[1]?.split(/#+ (?:Notes|notes)/i)[0]?.trim() /* Extract prompt section */
+                  || promptText.replace(/^---[\s\S]+?---/, '').trim() /* Fallback: just strip frontmatter */
+        }
       </p>
       <!-- Bottom fade out mask for code -->
       <div class="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#0d121c] to-transparent pointer-events-none rounded-b-md"></div>
