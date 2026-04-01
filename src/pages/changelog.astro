@@ -4,6 +4,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 const changelog = [
   {
     date: '2026-04-01',
+    version: 'v2.0.0',
+    title: 'CLI Dashboard Overhaul (Ink TUI)',
+    changes: [
+      { type: 'feature', text: 'Complete React/Ink-based TUI dashboard with side-by-side layout' },
+      { type: 'feature', text: 'btop-inspired interface with borders, headers, and labels' },
+      { type: 'feature', text: 'Real-time structured preview for Role, Objective, and Content' },
+      { type: 'feature', text: 'Independent sidebar and preview panel scrolling' },
+      { type: 'feature', text: 'Interactive selection with keyboard navigation (Arrows, Q to quit, C to copy)' },
+      { type: 'improvement', text: 'Switched from JSON API to direct local Markdown parsing for performance' },
+    ]
+  },
+  {
+    date: '2026-04-01',
     version: 'v1.6.0',
     title: 'Customizable Page Size & Visual Results',
     changes: [

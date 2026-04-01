@@ -3,11 +3,15 @@ import Tag from './Tag.astro';
 import CopyButton from './CopyButton.astro';
 
 const { title, description, tags, preview, thumbnail, model, slug, promptText, index = 100 } = Astro.props;
+
+// Extract variables from promptText
+const rawVariables = [...new Set(promptText.match(/\{\{([\s\S]+?)\}\}/g) || [])];
+const variables: string[] = rawVariables.map(v => v.replace(/\{\{|\}\}/g, ''));
 ---
 
-<div class="prompt-card group relative flex flex-col overflow-hidden leading-snug w-full max-w-sm mx-auto sm:max-w-none">
+<div class="prompt-card group relative flex flex-col overflow-hidden leading-snug w-full max-w-sm mx-auto sm:max-w-none" data-original-prompt={promptText}>
   <!-- Link overlay to go to detail page -->
-  <a href={`/prompt/${slug}`} class="absolute inset-0 z-10">
+  <a href={`/prompt/${slug}`} class="absolute inset-0 z-10 transition-all opacity-100 group-[.editing]:opacity-0 group-[.editing]:pointer-events-none">
     <span class="sr-only">View prompt details</span>
   </a>
 
@@ -50,12 +54,37 @@ const { title, description, tags, preview, thumbnail, model, slug, promptText, i
     
     <!-- Code Snippet Preview -->
     <div class="relative bg-[#0d121c] border border-[var(--border)] rounded-md p-3 mb-5 flex-grow overflow-hidden">
-      <p class="font-mono text-xs text-[var(--text-secondary)] opacity-90 leading-relaxed whitespace-pre-wrap line-clamp-4">
+      <p class="prompt-preview-text font-mono text-xs text-[var(--text-secondary)] opacity-90 leading-relaxed whitespace-pre-wrap line-clamp-4">
         {promptText}
       </p>
       <!-- Bottom fade out mask for code -->
       <div class="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#0d121c] to-transparent pointer-events-none rounded-b-md"></div>
     </div>
+
+    <!-- Variables Config Panel (Sticky/Expansion) -->
+    {variables.length > 0 && (
+      <div class="variables-panel relative z-20 bg-[var(--surface-hover)] border border-[var(--border)] rounded-md p-3 mb-5 transition-all">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[10px] font-bold text-[var(--accent-start)] uppercase tracking-widest">Personalize Prompt</span>
+          <span class="text-[9px] text-[var(--text-secondary)] font-mono">{variables.length} vars</span>
+        </div>
+        <div class="flex flex-col gap-2.5">
+          {variables.map((v: string) => (
+            <div class="variable-input-group flex flex-col gap-1">
+              <label class="text-[10px] text-[var(--text-secondary)] font-medium capitalize prose-sm">
+                {v.replace(/_/g, ' ')}
+              </label>
+              <input 
+                type="text" 
+                data-variable={v}
+                placeholder={`Enter ${v.toLowerCase().replace(/_/g, ' ')}...`}
+                class="variable-input w-full bg-[var(--bg)] border border-[var(--border)] rounded px-2 py-1.5 text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent-start)] transition-all placeholder:opacity-30"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
     
     <!-- Tags & Bottom actions -->
     <div class="mt-auto flex flex-col gap-4">
@@ -85,6 +114,73 @@ const { title, description, tags, preview, thumbnail, model, slug, promptText, i
     </div>
   </div>
 </div>
+
+<script>
+  function setupVariables() {
+    const cards = document.querySelectorAll('.prompt-card');
+    
+    cards.forEach(card => {
+      const inputs = card.querySelectorAll('.variable-input') as NodeListOf<HTMLInputElement>;
+      const copyBtn = card.querySelector('.copy-btn');
+      const previewText = card.querySelector('.prompt-preview-text');
+      const originalPrompt = card.getAttribute('data-original-prompt') || '';
+      
+      if (inputs.length === 0) return;
+
+      const updatePrompt = () => {
+        let currentPrompt = originalPrompt;
+        
+        inputs.forEach(input => {
+          const variable = input.getAttribute('data-variable');
+          const value = input.value.trim();
+          if (variable && value) {
+            const regex = new RegExp(`\\{\\{${variable}\\}\\}`, 'g');
+            currentPrompt = currentPrompt.replace(regex, value);
+          }
+        });
+
+        // Update Copy Button
+        if (copyBtn) copyBtn.setAttribute('data-prompt', currentPrompt);
+        
+        // Visual feedback in preview (lightweight)
+        if (previewText) {
+          previewText.textContent = currentPrompt;
+        }
+        
+        // Add "editing" state to card
+        if (Array.from(inputs).some(i => i.value.trim() !== '')) {
+          card.classList.add('editing');
+        } else {
+          card.classList.remove('editing');
+        }
+      };
+
+      inputs.forEach(input => {
+        input.addEventListener('input', updatePrompt);
+        input.addEventListener('focus', () => card.classList.add('editing'));
+        input.addEventListener('blur', () => {
+          if (!Array.from(inputs).some(i => i.value.trim() !== '')) {
+            card.classList.remove('editing');
+          }
+        });
+      });
+    });
+  }
+
+  // Initial setup
+  setupVariables();
+
+  // Re-run on navigation
+  document.addEventListener('astro:page-load', setupVariables);
+  
+  // Custom observer for the filtered grid
+  const observer = new MutationObserver((mutations) => {
+    mutations.map(() => setupVariables());
+  });
+
+  const grid = document.getElementById('promptGrid');
+  if (grid) observer.observe(grid, { childList: true });
+</script>
 
 <style>
   .font-heading {
@@ -128,6 +224,15 @@ const { title, description, tags, preview, thumbnail, model, slug, promptText, i
     fill: #f43f5e;
     stroke: #f43f5e;
   }
+
+  /* Fade out link overlay when editing variables so they are accessible */
+  .prompt-card.editing a[href*="/prompt/"] {
+    pointer-events: none;
+    opacity: 0;
+  }
+  
+  .variables-panel {
+    background: rgba(var(--accent-rgb), 0.03);
+    border-color: rgba(var(--accent-rgb), 0.15);
+  }
 </style>
-
-
