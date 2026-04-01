@@ -37,7 +37,20 @@ import CommandPalette from '../components/CommandPalette.astro';
     <!-- Preconnect to Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link 
+      rel="preload" 
+      as="style" 
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap"
+    >
+    <link 
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" 
+      rel="stylesheet"
+      media="print" 
+      onload="this.media='all'"
+    >
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    </noscript>
   </head>
   <body class="bg-[var(--bg)] text-[var(--text-primary)] font-body min-h-screen flex flex-col antialiased selection:bg-[var(--accent-start)] selection:text-white pb-6">
     <main class="flex-grow max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 pt-6">
@@ -48,7 +61,7 @@ import CommandPalette from '../components/CommandPalette.astro';
         <div class="flex items-center gap-2">
           <p>&copy; {new Date().getFullYear()} Prompt Library</p>
           <span class="opacity-30 hidden md:inline">·</span>
-          <p class="hidden md:inline">Made with &hearts; by fazleyrabbi</p>
+          <p class="hidden md:inline">Made with <span aria-label="love">&hearts;</span> by fazleyrabbi</p>
         </div>
         <div class="flex flex-wrap items-center justify-center gap-y-3 gap-x-6">
           <a href="https://fazleyrabbi.xyz" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--text-primary)] transition-colors font-medium">Portfolio</a>
@@ -81,8 +94,8 @@ import CommandPalette from '../components/CommandPalette.astro';
     --text-secondary: #9CA3AF;
 
     /* Accent */
-    --accent-start: #6366F1;
-    --accent-end: #8B5CF6;
+    --accent-start: #818CF8;
+    --accent-end: #A78BFA;
     --accent: linear-gradient(135deg, var(--accent-start), var(--accent-end));
   }
 

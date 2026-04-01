@@ -8,4 +8,10 @@ export default defineConfig({
   base: '/', 
   integrations: [tailwind()],
   prefetch: true,
+  build: {
+    format: 'file',
+    inlineStylesheets: 'auto',
+  },
+  output: 'static',
+  compressHTML: true,
 });

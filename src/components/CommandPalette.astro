@@ -10,7 +10,7 @@ const promptsData = allPrompts.map(p => ({
 }));
 ---
 
-<div id="cmd-palette" class="fixed inset-0 z-50 flex items-start justify-center pt-[10vh] px-4 opacity-0 pointer-events-none transition-opacity duration-200 ease-out" role="dialog" aria-modal="true">
+<div id="cmd-palette" class="fixed inset-0 z-50 flex items-start justify-center pt-[10vh] px-4 opacity-0 pointer-events-none transition-opacity duration-200 ease-out" role="dialog" aria-modal="true" aria-label="Command Palette">
   <!-- Backdrop -->
   <div id="cmd-backdrop" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
 
@@ -28,6 +28,7 @@ const promptsData = allPrompts.map(p => ({
         class="w-full bg-transparent border-0 text-[var(--text-primary)] px-4 py-4 text-lg focus:ring-0 focus:outline-none placeholder:text-[var(--text-secondary)]/50" 
         placeholder="Search prompts, categories... (e.g. 'React', 'Auth')"
         autocomplete="off"
+        aria-label="Search prompts"
       />
       <div class="hidden sm:flex items-center gap-1 absolute right-4">
         <kbd class="px-2 py-1 bg-[var(--surface)] border border-[var(--border)] rounded flex items-center justify-center text-[10px] font-mono text-[var(--text-secondary)]">ESC</kbd>

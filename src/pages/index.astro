@@ -40,6 +40,7 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
             type="text" 
             placeholder="Search prompts..." 
             class="bg-transparent border-none focus:outline-none w-full text-[var(--text-primary)] placeholder-[var(--text-secondary)] text-sm"
+            aria-label="Search prompts"
           />
           <kbd class="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono text-[var(--text-secondary)] border border-[var(--border)] bg-[var(--bg)] ml-2 shrink-0">
             <span class="os-mod hidden lg:inline">⌘K</span>
@@ -543,30 +544,32 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
         };
         pageNumbers.appendChild(btn);
       }
-    }
+     }
   }
 
   function renderPage() {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
+    requestAnimationFrame(() => {
+      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+      const endIndex = startIndex + ITEMS_PER_PAGE;
 
-    promptCards.forEach(card => {
-      const el = card as HTMLElement;
-      el.style.display = 'none';
-    });
+      promptCards.forEach(card => {
+        const el = card as HTMLElement;
+        el.style.display = 'none';
+      });
 
-    filteredCards.forEach((card, index) => {
-      if (index >= startIndex && index < endIndex) {
-        card.style.display = 'block';
+      filteredCards.forEach((card, index) => {
+        if (index >= startIndex && index < endIndex) {
+          card.style.display = 'block';
+        }
+      });
+
+      // Update result count
+      if (resultCount) {
+        resultCount.textContent = `${filteredCards.length} prompt${filteredCards.length !== 1 ? 's' : ''}`;
       }
+
+      updatePagination();
     });
-
-    // Update result count
-    if (resultCount) {
-      resultCount.textContent = `${filteredCards.length} prompt${filteredCards.length !== 1 ? 's' : ''}`;
-    }
-
-    updatePagination();
   }
 
   function filterPrompts() {
@@ -658,10 +661,14 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
     }
   }
 
-  // Search
+  // Search debounce
+  let searchTimeout: any;
   searchInput?.addEventListener('input', (e) => {
     searchQuery = (e.currentTarget as HTMLInputElement).value.toLowerCase();
-    filterPrompts();
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      filterPrompts();
+    }, 150);
   });
 
   // Category buttons

@@ -33,6 +33,7 @@ const { title, description, tags, preview, thumbnail, model, slug, promptText, i
         height="360" 
         loading={index < 4 ? "eager" : "lazy"}
         fetchpriority={index < 2 ? "high" : "auto"}
+        decoding="async"
       >
       {thumbnail && (
         <span class="absolute bottom-2 left-2 px-1.5 py-0.5 bg-black/60 backdrop-blur-md rounded text-[8px] sm:text-[9px] text-white/90 font-mono uppercase tracking-widest border border-white/10 pointer-events-none z-20">
