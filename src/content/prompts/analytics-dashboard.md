@@ -4,6 +4,7 @@ description: "Stat cards and chart placeholders for metrics."
 category: "dashboard"
 tags: ["analytics", "stats", "charts", "metrics"]
 model: "GPT 5.3 Ultra"
+thumbnail: "https://i.ibb.co/8Dn0Kpcb/Clean-Shot-2026-04-01-at-11-31-16-2x.webp"
 ---
 
 ## Prompt

@@ -7,6 +7,7 @@ const prompts = defineCollection({
     category: z.string(),
     tags: z.array(z.string()),
     preview: z.string().optional(),
+    thumbnail: z.string().optional(),
     model: z.string(),
   }),
 });

@@ -155,21 +155,37 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
             </svg>
           </button>
-          <h1 class="text-2xl font-semibold font-heading tracking-tight text-[var(--text-primary)] flex items-center gap-2.5 group">
+          <h1 class="text-xl sm:text-2xl font-semibold font-heading tracking-tight text-[var(--text-primary)] flex items-center gap-2 group">
             <div class="relative flex items-center justify-center">
               <div class="absolute -inset-1 bg-[var(--accent-start)] blur-md opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[var(--accent-start)] relative z-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6 text-[var(--accent-start)] relative z-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="4 17 10 11 4 5"></polyline>
                 <line x1="12" y1="19" x2="20" y2="19"></line>
               </svg>
             </div>
-            Prompt Library
+            <span class="truncate">Library</span>
           </h1>
         </div>
         <div class="flex items-center gap-3">
           <span id="resultCount" class="text-sm text-[var(--text-secondary)] hidden sm:block">
             {prompts.length} prompts
           </span>
+
+          <div class="relative flex items-center gap-1 px-1.5 py-1 sm:px-2.5 sm:py-1.5 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[10px] sm:text-[11px] font-medium text-[var(--text-secondary)] hover:border-[var(--border-hover)] hover:bg-[var(--surface-hover)] transition-all cursor-pointer group">
+            <span class="hidden sm:inline-block opacity-60 uppercase tracking-tight">Show:</span>
+            <span id="pageSizeDisplay" class="text-[var(--text-primary)] font-bold">12</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-3.5 sm:w-3.5 opacity-40 group-hover:opacity-100 transition-opacity" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+            <select id="pageSize" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer appearance-none">
+              <option value="8">8</option>
+              <option value="12">12</option>
+              <option value="24">24</option>
+              <option value="48">48</option>
+              <option value="96">96</option>
+            </select>
+          </div>
+
           <a 
             href="https://www.npmjs.com/package/@fazleyrabbi/prompts" 
             target="_blank" 
@@ -227,6 +243,7 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
               category={prompt.data.category}
               tags={prompt.data.tags}
               preview={prompt.data.preview}
+              thumbnail={prompt.data.thumbnail}
               model={prompt.data.model}
               slug={prompt.slug}
               promptText={prompt.body.replace(/## Prompt\s+/, '').split('## Notes')[0].trim()}
@@ -344,7 +361,23 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
   const favFilterBtn = document.getElementById('favFilter');
   const favCountEl = document.getElementById('favCount');
 
-  const ITEMS_PER_PAGE = 8;
+  const pageSizeSelect = document.getElementById('pageSize') as HTMLSelectElement;
+  const pageSizeDisplay = document.getElementById('pageSizeDisplay');
+  let ITEMS_PER_PAGE = parseInt(localStorage.getItem('prompt_library_page_size') || '12');
+  
+  if (pageSizeSelect) {
+    pageSizeSelect.value = ITEMS_PER_PAGE.toString();
+    if (pageSizeDisplay) pageSizeDisplay.textContent = ITEMS_PER_PAGE.toString();
+    
+    pageSizeSelect.addEventListener('change', (e) => {
+      ITEMS_PER_PAGE = parseInt((e.target as HTMLSelectElement).value);
+      if (pageSizeDisplay) pageSizeDisplay.textContent = ITEMS_PER_PAGE.toString();
+      localStorage.setItem('prompt_library_page_size', ITEMS_PER_PAGE.toString());
+      currentPage = 1;
+      filterPrompts();
+    });
+  }
+
   let activeCategory = 'all';
   let activeTags: string[] = [];
   let searchQuery = '';

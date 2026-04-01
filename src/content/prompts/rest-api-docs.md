@@ -4,6 +4,7 @@ description: "Interactive API docs layout with endpoint cards."
 category: "api"
 tags: ["api", "documentation", "rest", "endpoints"]
 model: "Gemini 3.1 Pro"
+thumbnail: "https://i.ibb.co/YFkZKBwP/Clean-Shot-2026-04-01-at-11-31-00-2x.webp"
 ---
 
 ## Prompt
