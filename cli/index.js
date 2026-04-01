@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import Fuse from 'fuse.js';
+import enquirer from 'enquirer';
 import { intro, outro, spinner, select, text, isCancel, cancel } from '@clack/prompts';
 import clipboardy from 'clipboardy';
 import pc from 'picocolors';
@@ -29,57 +31,103 @@ async function main() {
 
   const allPrompts = await fetchPrompts();
 
-  // Create a searchable select list
-  const promptChoice = await select({
-    message: 'Select a prompt to copy:',
-    options: allPrompts.map(p => ({
-      value: p,
-      label: p.title,
-      hint: pc.dim(p.category)
-    })),
-    maxItems: 10
+  const fuse = new Fuse(allPrompts, {
+    keys: [
+      { name: 'title', weight: 0.6 },
+      { name: 'category', weight: 0.3 },
+      { name: 'tags', weight: 0.1 }
+    ],
+    threshold: 0.4
   });
 
-  if (isCancel(promptChoice)) {
-    cancel('Operation cancelled.');
-    process.exit(0);
-  }
+  let stayInCli = true;
 
-  // Handle Variables
-  let finalPromptText = promptChoice.promptText;
-  
-  if (promptChoice.variables && promptChoice.variables.length > 0) {
-    outro(pc.cyan(`\nThis prompt requires ${promptChoice.variables.length} variables:`));
-    
-    for (const variable of promptChoice.variables) {
-      const varValue = await text({
-        message: pc.white(`Value for ${pc.yellow(`{{${variable}}}`)}:`),
-        placeholder: `Enter ${variable.toLowerCase().replace(/_/g, ' ')}...`
+  while (stayInCli) {
+    let promptChoice;
+    try {
+      const prompt = new enquirer.Autocomplete({
+        name: 'prompt',
+        message: pc.cyan('Select a prompt (start typing to filter)'),
+        limit: 10,
+        choices: allPrompts.map(p => ({
+          name: p.title,
+          message: p.title,
+          value: p,
+          hint: pc.dim(`(${p.category})`)
+        })),
+        async suggest(input, choices) {
+          if (!input) return choices;
+          const results = fuse.search(input);
+          return results.map(r => {
+             const choice = choices.find(c => c.name === r.item.title);
+             return choice;
+          }).filter(Boolean);
+        }
       });
 
-      if (isCancel(varValue)) {
-        cancel('Operation cancelled.');
-        process.exit(0);
-      }
-
-      // Replace globally
-      const regex = new RegExp(`\\{\\{${variable}\\}\\}`, 'g');
-      finalPromptText = finalPromptText.replace(regex, varValue);
+      const selectedTitle = await prompt.run();
+      promptChoice = allPrompts.find(p => p.title === selectedTitle);
+    } catch (err) {
+      outro(pc.yellow('Exiting... Thanks for using @fazleyrabbi/prompts!'));
+      process.exit(0);
     }
-  }
 
-  // Copy to clipboard
-  try {
-    await clipboardy.write(finalPromptText);
-    outro(pc.green('✨ Successfully copied to clipboard!'));
-    console.log(pc.dim('----------------------------------------'));
-    // Console log the first 100 characters preview
-    console.log(pc.gray(finalPromptText.substring(0, 100) + (finalPromptText.length > 100 ? '...' : '')));
-    console.log(pc.dim('----------------------------------------\n'));
-  } catch (err) {
-    cancel('Failed to copy to clipboard automatically.');
-    console.log('\nHere is your compiled prompt:\n\n' + finalPromptText);
-    process.exit(1);
+    if (!promptChoice) {
+      cancel('No prompt selected.');
+      process.exit(0);
+    }
+
+    // Handle Variables
+    let finalPromptText = promptChoice.promptText;
+    
+    if (promptChoice.variables && promptChoice.variables.length > 0) {
+      outro(pc.cyan(`\nPrompt selected: ${pc.bold(promptChoice.title)}`));
+      console.log(pc.dim(`This prompt requires ${promptChoice.variables.length} variables:\n`));
+      
+      for (const variable of promptChoice.variables) {
+        const varValue = await text({
+          message: pc.white(`Value for ${pc.yellow(`{{${variable}}}`)}:`),
+          placeholder: `Enter ${variable.toLowerCase().replace(/_/g, ' ')}...`
+        });
+
+        if (isCancel(varValue)) {
+          cancel('Operation cancelled.');
+          process.exit(0);
+        }
+
+        const regex = new RegExp(`\\{\\{${variable}\\}\\}`, 'g');
+        finalPromptText = finalPromptText.replace(regex, varValue);
+      }
+    }
+
+    // Copy to clipboard
+    try {
+      await clipboardy.write(finalPromptText);
+      outro(pc.green('✨ Successfully copied to clipboard!'));
+      console.log(pc.dim('----------------------------------------'));
+      console.log(pc.gray(finalPromptText.substring(0, 100) + (finalPromptText.length > 100 ? '...' : '')));
+      console.log(pc.dim('----------------------------------------\n'));
+    } catch (err) {
+      console.log('\nHere is your compiled prompt:\n\n' + finalPromptText);
+    }
+
+    // Navigation: Continue or Exit?
+    const nextAction = await select({
+      message: 'What would you like to do next?',
+      options: [
+        { value: 'search', label: '🔍 Search more prompts', hint: 'Back to the list' },
+        { value: 'exit', label: '👋 Exit CLI', hint: 'Close the program' }
+      ]
+    });
+
+    if (isCancel(nextAction) || nextAction === 'exit') {
+      stayInCli = false;
+      outro(pc.yellow('Exiting... Thanks for using @fazleyrabbi/prompts!'));
+    } else {
+      console.clear();
+      intro(pc.bgBlue(pc.white(' 🚀 @fazleyrabbi/prompts CLI ')));
+      console.log(pc.dim(`Currently loaded: ${allPrompts.length} prompts\n`));
+    }
   }
 }
 
