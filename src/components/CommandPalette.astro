@@ -216,6 +216,9 @@ const promptsData = allPrompts.map(p => ({
   document.addEventListener('keydown', handleKeydown);
   backdrop.addEventListener('click', closePalette);
   input.addEventListener('input', handleSearch);
+
+  // Allow other components to open the palette
+  window.addEventListener('open-command-palette', openPalette);
 </script>
 
 <style>
