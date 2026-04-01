@@ -53,7 +53,6 @@ async function main() {
         choices: allPrompts.map(p => ({
           name: p.title,
           message: p.title,
-          value: p,
           hint: pc.dim(`(${p.category})`)
         })),
         async suggest(input, choices) {
@@ -63,16 +62,11 @@ async function main() {
              const choice = choices.find(c => c.name === r.item.title);
              return choice;
           }).filter(Boolean);
-        },
-        result(value) {
-          // Find the selected choice object
-          const choice = this.options.choices.find(c => c.name === value);
-          // Return the actual prompt object
-          return choice ? choice.value : null;
         }
       });
 
-      promptChoice = await prompt.run();
+      const selectedTitle = await prompt.run();
+      promptChoice = allPrompts.find(p => p.title === selectedTitle);
     } catch (err) {
       outro(pc.yellow('Exiting... Thanks for using @fazleyrabbi/prompts!'));
       process.exit(0);
@@ -93,18 +87,24 @@ async function main() {
       for (const variable of promptChoice.variables) {
         const varValue = await text({
           message: pc.white(`Value for ${pc.yellow(`{{${variable}}}`)}:`),
-          placeholder: `Enter ${variable.toLowerCase().replace(/_/g, ' ')}...`
+          placeholder: `Enter ${variable.toLowerCase().replace(/_/g, ' ')}...`,
+          hint: 'Press Esc/Ctrl+C to go back to search'
         });
 
         if (isCancel(varValue)) {
-          cancel('Operation cancelled.');
-          process.exit(0);
+          console.clear();
+          intro(pc.bgBlue(pc.white(' 🚀 @fazleyrabbi/prompts CLI ')));
+          console.log(pc.yellow('↩ Went back to search.'));
+          promptChoice = null;
+          break;
         }
 
         const regex = new RegExp(`\\{\\{${variable}\\}\\}`, 'g');
         finalPromptText = finalPromptText.replace(regex, varValue);
       }
     }
+
+    if (!promptChoice) continue;
 
     // Copy to clipboard
     try {

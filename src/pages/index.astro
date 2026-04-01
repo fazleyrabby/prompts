@@ -213,7 +213,7 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
           </svg>
           Most Used
         </h2>
-        <div id="topPromptGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+        <div id="topPromptGrid" class="columns-1 sm:columns-2 xl:columns-3 2xl:columns-4 gap-6">
         </div>
       </div>
 
@@ -226,10 +226,10 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
       </h2>
 
       <!-- Grid -->
-      <div id="promptGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+      <div id="promptGrid" class="columns-1 sm:columns-2 xl:columns-3 2xl:columns-4 gap-6">
         {prompts.map((prompt) => (
           <div 
-            class="prompt-card-wrapper transition-all duration-200" 
+            class="prompt-card-wrapper break-inside-avoid mb-6 transition-all duration-200" 
             data-tags={prompt.data.tags.join(',')} 
             data-category={prompt.data.category}
             data-title={prompt.data.title.toLowerCase()} 
