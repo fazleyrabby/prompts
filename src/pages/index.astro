@@ -17,7 +17,16 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
 >
   <div class="flex gap-6">
     <!-- Sidebar -->
-    <aside id="sidebar" class="hidden lg:flex flex-col gap-6 w-64 shrink-0 sticky top-6 self-start max-h-[calc(100vh-4rem)] overflow-y-auto pr-2">
+    <aside id="sidebar" class="hidden lg:flex flex-col gap-6 w-64 shrink-0 sticky top-6 self-start lg:max-h-[calc(100vh-4rem)] overflow-y-auto pr-2 bg-[var(--bg)] lg:bg-transparent z-[60]">
+      <!-- Mobile Close Button -->
+      <div class="lg:hidden flex items-center justify-between mb-4 pb-2 border-b border-[var(--border)]">
+        <span class="text-xs font-bold text-[var(--accent-start)] uppercase tracking-widest">Menu</span>
+        <button id="closeSidebar" class="p-2 -mr-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" aria-label="Close menu">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
       
       <!-- Search -->
       <div class="relative group">
@@ -60,18 +69,28 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
             <span>All Prompts</span>
             <span class="text-xs font-mono opacity-60">{prompts.length}</span>
           </button>
-          {allCategories.map(cat => {
-            const count = prompts.filter(p => p.data.category === cat).length;
-            return (
-              <button 
-                data-category={cat}
-                class="category-btn flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-left text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] transition-all"
-              >
-                <span class="capitalize">{cat}</span>
-                <span class="text-xs font-mono opacity-60">{count}</span>
-              </button>
-            );
-          })}
+          <div id="categoryContainer" class="flex flex-col gap-1 overflow-hidden transition-all duration-300 max-h-[280px]">
+            {allCategories.map(cat => {
+              const count = prompts.filter(p => p.data.category === cat).length;
+              return (
+                <button 
+                  data-category={cat}
+                  class="category-btn flex items-center justify-between w-full px-3 py-2 rounded-md text-sm text-left text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] transition-all"
+                >
+                  <span class="capitalize">{cat}</span>
+                  <span class="text-xs font-mono opacity-60">{count}</span>
+                </button>
+              );
+            })}
+          </div>
+          {allCategories.length > 6 && (
+            <button id="toggleCategories" class="text-[11px] font-medium text-[var(--accent-start)] hover:text-[var(--accent-end)] transition-colors mt-2 flex items-center gap-1 group">
+              <span class="button-text">Show more</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 transition-transform group-[.open]:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          )}
         </div>
       </div>
 
@@ -86,7 +105,7 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
             Clear
           </button>
         </div>
-        <div class="flex flex-wrap gap-1.5" id="tagFilters">
+        <div id="tagContainer" class="flex flex-wrap gap-1.5 overflow-hidden transition-all duration-300 max-h-[120px]">
           {allTags.map(tag => (
             <button 
               data-tag={tag}
@@ -96,6 +115,14 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
             </button>
           ))}
         </div>
+        {allTags.length > 12 && (
+          <button id="toggleTags" class="text-[11px] font-medium text-[var(--accent-start)] hover:text-[var(--accent-end)] transition-colors mt-3 flex items-center gap-1 group">
+            <span class="button-text">Show more</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 transition-transform group-[.open]:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        )}
       </div>
 
       <!-- Sidebar Footer -->
@@ -120,7 +147,7 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
     <!-- Main Content -->
     <div class="flex-1 min-w-0">
       <!-- Header Row -->
-      <header class="flex items-center justify-between mb-6 border-b border-[var(--border)] pb-4">
+      <header class="sticky top-0 z-30 bg-[var(--bg)]/80 backdrop-blur-md flex items-center justify-between mb-6 border-b border-[var(--border)] py-4 transition-all">
         <div class="flex items-center gap-3">
           <!-- Mobile Sidebar Toggle -->
           <button id="sidebarToggle" class="lg:hidden p-2 rounded-md border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface)] transition-all">
@@ -261,13 +288,16 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
     top: 0;
     left: 0;
     bottom: 0;
-    z-index: 50;
+    z-index: 100; /* Higher than header and overlay */
     width: 280px;
-    max-height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
     padding: 1.5rem;
     background-color: var(--bg);
     border-right: 1px solid var(--border);
-    animation: slideIn 200ms ease-out;
+    animation: slideIn 200ms cubic-bezier(0.16, 1, 0.3, 1);
+    overflow-y: auto;
+    box-shadow: 20px 0 50px rgba(0, 0, 0, 0.5);
   }
 
   #sidebar-overlay {
@@ -277,9 +307,9 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
     display: block;
     position: fixed;
     inset: 0;
-    z-index: 40;
-    background: rgba(0,0,0,0.5);
-    backdrop-filter: blur(2px);
+    z-index: 90; /* Just below sidebar */
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
   }
 
   @keyframes slideIn {
@@ -332,18 +362,83 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
     if (showFavoritesOnly) filterPrompts();
   });
 
-  // Mobile sidebar
-  const overlay = document.createElement('div');
-  overlay.id = 'sidebar-overlay';
-  document.body.appendChild(overlay);
+  // Mobile sidebar initialization
+  function initMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const closeSidebar = document.getElementById('closeSidebar');
+    
+    if (!sidebar || !sidebarToggle || sidebarToggle.getAttribute('data-sidebar-init')) return;
+    sidebarToggle.setAttribute('data-sidebar-init', 'true');
 
-  sidebarToggle?.addEventListener('click', () => {
-    sidebar?.classList.toggle('mobile-open');
-    overlay.classList.toggle('active');
+    // Check if idempotent (avoid duplicate overlays)
+    let overlay = document.getElementById('sidebar-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'sidebar-overlay';
+      document.body.appendChild(overlay);
+    }
+
+    const closeSidebarFn = () => {
+      sidebar?.classList.remove('mobile-open');
+      overlay?.classList.remove('active');
+      document.body.style.overflow = '';
+    };
+
+    const toggleSidebarFn = () => {
+      const isOpen = sidebar?.classList.contains('mobile-open');
+      if (isOpen) {
+        closeSidebarFn();
+      } else {
+        sidebar?.classList.add('mobile-open');
+        overlay?.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+    };
+
+    sidebarToggle.addEventListener('click', toggleSidebarFn);
+    closeSidebar?.addEventListener('click', closeSidebarFn);
+    overlay.addEventListener('click', closeSidebarFn);
+  }
+
+  initMobileSidebar();
+  document.addEventListener('astro:page-load', initMobileSidebar);
+
+  // Collapsible sections
+  const toggleCategoriesBtn = document.getElementById('toggleCategories');
+  const categoryContainer = document.getElementById('categoryContainer');
+  
+  toggleCategoriesBtn?.addEventListener('click', () => {
+    const isOpen = categoryContainer?.style.maxHeight === 'none';
+    if (isOpen) {
+      if (categoryContainer) categoryContainer.style.maxHeight = '280px';
+      toggleCategoriesBtn.classList.remove('open');
+      const text = toggleCategoriesBtn.querySelector('.button-text');
+      if (text) text.textContent = 'Show more';
+    } else {
+      if (categoryContainer) categoryContainer.style.maxHeight = 'none';
+      toggleCategoriesBtn.classList.add('open');
+      const text = toggleCategoriesBtn.querySelector('.button-text');
+      if (text) text.textContent = 'Show less';
+    }
   });
-  overlay.addEventListener('click', () => {
-    sidebar?.classList.remove('mobile-open');
-    overlay.classList.remove('active');
+
+  const toggleTagsBtn = document.getElementById('toggleTags');
+  const tagContainer = document.getElementById('tagContainer');
+
+  toggleTagsBtn?.addEventListener('click', () => {
+    const isOpen = tagContainer?.style.maxHeight === 'none';
+    if (isOpen) {
+      if (tagContainer) tagContainer.style.maxHeight = '120px';
+      toggleTagsBtn.classList.remove('open');
+      const text = toggleTagsBtn.querySelector('.button-text');
+      if (text) text.textContent = 'Show more';
+    } else {
+      if (tagContainer) tagContainer.style.maxHeight = 'none';
+      toggleTagsBtn.classList.add('open');
+      const text = toggleTagsBtn.querySelector('.button-text');
+      if (text) text.textContent = 'Show less';
+    }
   });
 
   function updatePagination() {

@@ -43,15 +43,19 @@ import CommandPalette from '../components/CommandPalette.astro';
     <main class="flex-grow max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 pt-6 fade-in">
       <slot />
     </main>
-    <footer class="mt-12 py-6 border-t border-[var(--border)] text-center text-[var(--text-secondary)] font-mono text-sm max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-center gap-4">
-        <p>&copy; {new Date().getFullYear()} Prompt Library</p>
-        <span class="opacity-30">·</span>
-        <a href="https://fazleyrabbi.xyz" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--text-primary)] transition-colors font-medium">fazleyrabbi.xyz</a>
-        <span class="opacity-30">·</span>
-        <a href="/changelog" class="hover:text-[var(--text-primary)] transition-colors">Changelog</a>
-        <span class="opacity-30">·</span>
-        <a href="https://www.npmjs.com/package/@fazleyrabbi/prompts" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--text-primary)] transition-colors">CLI (NPM)</a>
+    <footer class="mt-16 py-10 border-t border-[var(--border)] text-[var(--text-secondary)] font-mono text-xs max-w-[1600px] mx-auto w-full px-6 sm:px-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="flex items-center gap-2">
+          <p>&copy; {new Date().getFullYear()} Prompt Library</p>
+          <span class="opacity-30 hidden md:inline">·</span>
+          <p class="hidden md:inline">Made with &hearts; by fazleyrabbi</p>
+        </div>
+        <div class="flex flex-wrap items-center justify-center gap-y-3 gap-x-6">
+          <a href="https://fazleyrabbi.xyz" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--text-primary)] transition-colors font-medium">Portfolio</a>
+          <a href="/changelog" class="hover:text-[var(--text-primary)] transition-colors">Changelog</a>
+          <a href="https://www.npmjs.com/package/@fazleyrabbi/prompts" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--text-primary)] transition-colors">CLI (NPM)</a>
+          <a href="https://github.com/fazleyrabbi/prompts" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--text-primary)] transition-colors">GitHub</a>
+        </div>
       </div>
     </footer>
     <Toast />
