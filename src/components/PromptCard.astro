@@ -2,7 +2,7 @@
 import Tag from './Tag.astro';
 import CopyButton from './CopyButton.astro';
 
-const { title, description, tags, preview, thumbnail, model, slug, promptText } = Astro.props;
+const { title, description, tags, preview, thumbnail, model, slug, promptText, index = 100 } = Astro.props;
 ---
 
 <div class="prompt-card group relative flex flex-col overflow-hidden leading-snug w-full max-w-sm mx-auto sm:max-w-none">
@@ -25,7 +25,15 @@ const { title, description, tags, preview, thumbnail, model, slug, promptText } 
   <!-- Preview image (only if provided) -->
   {(thumbnail || preview) && (
     <div class="card-preview w-full aspect-video bg-[var(--bg)] border-b border-[var(--border)] overflow-hidden shrink-0 relative">
-      <img src={thumbnail || preview} alt={title} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" width="640" height="360" loading="lazy">
+      <img 
+        src={thumbnail || preview} 
+        alt={title} 
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+        width="640" 
+        height="360" 
+        loading={index < 4 ? "eager" : "lazy"}
+        fetchpriority={index < 2 ? "high" : "auto"}
+      >
       {thumbnail && (
         <span class="absolute bottom-2 left-2 px-1.5 py-0.5 bg-black/60 backdrop-blur-md rounded text-[8px] sm:text-[9px] text-white/90 font-mono uppercase tracking-widest border border-white/10 pointer-events-none z-20">
           Prompt Result

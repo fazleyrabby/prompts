@@ -110,7 +110,7 @@ const relatedPrompts = allPrompts
 
     {entry.data.thumbnail && (
       <div class="mb-10 rounded-2xl overflow-hidden border border-[var(--border)] bg-[var(--surface)] shadow-2xl relative group">
-        <img src={entry.data.thumbnail} alt={`Result for ${entry.data.title}`} class="w-full h-auto object-cover max-h-[600px]" />
+        <img src={entry.data.thumbnail} alt={`Result for ${entry.data.title}`} class="w-full h-auto object-cover max-h-[600px]" fetchpriority="high" loading="eager" />
         <div class="absolute top-4 left-4">
            <span class="px-2 py-1 bg-black/60 backdrop-blur-md rounded-md text-[10px] text-white/90 font-mono uppercase tracking-widest border border-white/10 pointer-events-none shadow-lg">
              Prompt Result
@@ -215,7 +215,7 @@ const relatedPrompts = allPrompts
           </svg>
           Related Prompts
         </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
           {relatedPrompts.map((prompt: any) => (
             <PromptCard 
               title={prompt.data.title}
