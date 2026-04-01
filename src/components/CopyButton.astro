@@ -59,48 +59,59 @@ const { promptText, slug, label = "Copy Prompt", fullWidth = false } = Astro.pro
 </style>
 
 <script>
-  function setupCopyButtons() {
-    const buttons = document.querySelectorAll('.copy-btn');
-    buttons.forEach((btn) => {
-      // Remove previous event listener effectively by replacing the node (avoids duplication on astro page transitions)
-      const newBtn = btn.cloneNode(true) as HTMLButtonElement;
-      if (btn.parentNode) {
-        btn.parentNode.replaceChild(newBtn, btn);
-      }
+  function setupCopyDelegation() {
+    // Only attach event listener once
+    if (document.body.dataset.copyDelegated) return;
+    document.body.dataset.copyDelegated = 'true';
+
+    document.body.addEventListener('click', async (e) => {
+      const target = e.target as HTMLElement;
+      const btn = target.closest('.copy-btn');
       
-      newBtn.addEventListener('click', async (e) => {
-        e.preventDefault();
-        e.stopPropagation(); // prevent clicking link on parent card
-        const promptText = newBtn.getAttribute('data-prompt');
-        if (!promptText) return;
+      if (!btn) return;
+      
+      e.preventDefault();
+      e.stopPropagation(); // prevent clicking link on parent card
+      
+      const promptText = btn.getAttribute('data-prompt');
+      if (!promptText) return;
 
-        try {
-          await navigator.clipboard.writeText(promptText);
-          newBtn.classList.add('copied');
+      try {
+        await navigator.clipboard.writeText(promptText);
+        
+        const promptSlug = btn.getAttribute('data-slug');
+        
+        // Add copied class to ALL buttons for this prompt (syncs UI across grids)
+        const matchingBtns = document.querySelectorAll(`.copy-btn[data-slug="${promptSlug}"]`);
+        matchingBtns.forEach(b => b.classList.add('copied'));
+        
+        // Usage Analytics
+        if (promptSlug) {
+          const usage = JSON.parse(localStorage.getItem('prompt_usage') || '{}');
+          usage[promptSlug] = (usage[promptSlug] || 0) + 1;
+          localStorage.setItem('prompt_usage', JSON.stringify(usage));
           
-          // Usage Analytics
-          const promptSlug = newBtn.getAttribute('data-slug');
-          if (promptSlug) {
-            const usage = JSON.parse(localStorage.getItem('prompt_usage') || '{}');
-            usage[promptSlug] = (usage[promptSlug] || 0) + 1;
-            localStorage.setItem('prompt_usage', JSON.stringify(usage));
-            // Dispatch event so other components can react
-            window.dispatchEvent(new Event('prompt_usage_updated'));
-          }
-
-          if (typeof (window as any).showToast === 'function') {
-            (window as any).showToast('Prompt copied to clipboard!', 'success');
-          }
-          setTimeout(() => {
-            newBtn.classList.remove('copied');
-          }, 2000);
-        } catch (err) {
-          console.error("Failed to copy", err);
+          // Dispatch event so other components can react (e.g. Most Used grid)
+          window.dispatchEvent(new Event('prompt_usage_updated'));
         }
-      });
+
+        if (typeof (window as any).showToast === 'function') {
+          (window as any).showToast('Prompt copied to clipboard!', 'success');
+        }
+        
+        // Re-query in the timeout in case new clones were made (e.g. by Most Used grid)
+        setTimeout(() => {
+          document.querySelectorAll(`.copy-btn[data-slug="${promptSlug}"]`).forEach(b => {
+             b.classList.remove('copied');
+          });
+        }, 2000);
+        
+      } catch (err) {
+        console.error("Failed to copy", err);
+      }
     });
   }
 
-  setupCopyButtons();
-  document.addEventListener('astro:page-load', setupCopyButtons);
+  setupCopyDelegation();
+  document.addEventListener('astro:page-load', setupCopyDelegation);
 </script>
