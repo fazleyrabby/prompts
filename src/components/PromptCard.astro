@@ -130,44 +130,4 @@ const { title, description, tags, preview, thumbnail, model, slug, promptText, i
   }
 </style>
 
-<script>
-  function setupFavorites() {
-    const favBtns = document.querySelectorAll('.fav-btn');
-    const favs: string[] = JSON.parse(localStorage.getItem('prompt-favorites') || '[]');
 
-    favBtns.forEach(btn => {
-      const slug = (btn as HTMLElement).dataset.slug || '';
-      if (favs.includes(slug)) {
-        btn.classList.add('active');
-      }
-
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const currentFavs: string[] = JSON.parse(localStorage.getItem('prompt-favorites') || '[]');
-        
-        if (currentFavs.includes(slug)) {
-          const updated = currentFavs.filter(s => s !== slug);
-          localStorage.setItem('prompt-favorites', JSON.stringify(updated));
-          btn.classList.remove('active');
-          if (typeof (window as any).showToast === 'function') {
-            (window as any).showToast('Removed from favorites', 'info');
-          }
-        } else {
-          currentFavs.push(slug);
-          localStorage.setItem('prompt-favorites', JSON.stringify(currentFavs));
-          btn.classList.add('active');
-          if (typeof (window as any).showToast === 'function') {
-            (window as any).showToast('Added to favorites ♥', 'success');
-          }
-        }
-
-        // Dispatch event so sidebar can update
-        window.dispatchEvent(new CustomEvent('favorites-changed'));
-      });
-    });
-  }
-
-  setupFavorites();
-  document.addEventListener('astro:page-load', setupFavorites);
-</script>

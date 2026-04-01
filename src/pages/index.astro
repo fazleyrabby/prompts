@@ -568,12 +568,25 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
         resultCount.textContent = `${filteredCards.length} prompt${filteredCards.length !== 1 ? 's' : ''}`;
       }
 
+      syncURL();
       updatePagination();
     });
   }
 
-  function filterPrompts() {
-    currentPage = 1;
+  function syncURL() {
+    const params = new URLSearchParams();
+    if (activeCategory !== 'all') params.set('category', activeCategory);
+    if (activeTags.length > 0) params.set('tags', activeTags.join(','));
+    if (searchQuery) params.set('q', searchQuery);
+    if (showFavoritesOnly) params.set('favorites', 'true');
+    if (currentPage > 1) params.set('page', currentPage.toString());
+
+    const newURL = params.toString() ? `?${params.toString()}` : window.location.pathname;
+    window.history.replaceState({}, '', newURL);
+  }
+
+  function filterPrompts(shouldResetPage = true) {
+    if (shouldResetPage) currentPage = 1;
     filteredCards = [];
 
     promptCards.forEach(card => {
@@ -613,6 +626,7 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
 
     renderPage();
     updateTopPrompts();
+    syncURL();
   }
 
   function updateTopPrompts() {
@@ -652,11 +666,6 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
                topGrid.appendChild(cloned);
             }
          });
-         
-         // Re-bind listeners for the newly cloned buttons
-         setTimeout(() => {
-           document.dispatchEvent(new Event('astro:page-load'));
-         }, 50);
       }
     }
   }
@@ -742,12 +751,12 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
     }
   });
 
-  // Initial render — check URL for ?category= param
+  // Initial load: parse URL params
   const urlParams = new URLSearchParams(window.location.search);
-  const urlCategory = urlParams.get('category');
   
+  // 1. Category
+  const urlCategory = urlParams.get('category');
   if (urlCategory) {
-    // Find and activate the matching category button
     categoryBtns.forEach(btn => {
       const cat = (btn as HTMLElement).dataset.category || '';
       if (cat === urlCategory) {
@@ -758,7 +767,39 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
     });
   }
 
-  filterPrompts();
+  // 2. Favorites
+  if (urlParams.get('favorites') === 'true') {
+    categoryBtns.forEach(b => b.classList.remove('active'));
+    favFilterBtn?.classList.add('active');
+    showFavoritesOnly = true;
+    activeCategory = 'all';
+  }
+
+  // 3. Tags
+  const urlTags = urlParams.get('tags');
+  if (urlTags) {
+    activeTags = urlTags.split(',');
+    tagBtns.forEach(btn => {
+      const tag = (btn as HTMLElement).dataset.tag || '';
+      if (activeTags.includes(tag)) btn.classList.add('active');
+    });
+    updateClearBtn();
+  }
+
+  // 4. Search
+  const urlSearch = urlParams.get('q');
+  if (urlSearch) {
+    searchQuery = urlSearch.toLowerCase();
+    if (searchInput) searchInput.value = urlSearch;
+  }
+
+  // 5. Page
+  const urlPage = urlParams.get('page');
+  if (urlPage) {
+    currentPage = parseInt(urlPage) || 1;
+  }
+
+  filterPrompts(false); // Initial filter without resetting page
 
   // Keyboard shortcuts
   document.addEventListener('keydown', (e) => {

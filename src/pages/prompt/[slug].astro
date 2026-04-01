@@ -93,6 +93,16 @@ const relatedPrompts = allPrompts
             </svg>
             Share
           </button>
+          <button 
+            class="fav-btn flex items-center gap-1.5 px-2.5 py-1.5 h-8 rounded-md font-mono text-sm font-medium border border-[var(--border)] text-[var(--text-secondary)] hover:text-rose-400 hover:bg-rose-400/10 transition-all group"
+            data-slug={entry.slug}
+            aria-label="Toggle favorite"
+          >
+            <svg class="fav-icon w-3.5 h-3.5 transition-colors group-[.active]:fill-rose-500 group-[.active]:stroke-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="group-[.active]:text-rose-400">Favorite</span>
+          </button>
           <CopyButton promptText={promptText} slug={entry.slug} fullWidth={false} />
         </div>
       </div>
@@ -168,8 +178,16 @@ const relatedPrompts = allPrompts
             <svg class="w-3.5 h-3.5" viewBox="0 0 673 862" fill="currentColor"><path d="M371.74 199.112c-15.01-16.143-34.18-24.237-57.531-24.237-14.73 0-28.73 3.486-42.064 10.457-13.332 6.994-25.044 16.711-35.132 29.13l-45.748-43.766c14.24-17.656 31.066-31.543 50.472-41.673 19.381-10.155 40.231-15.247 62.532-15.247 37.892 0 71.073 13.064 99.516 39.208 28.468 26.12 42.69 60.106 42.69 101.97v384.722L371.74 621.5ZM139.112 400.32v73.742h222.845V400.32zM371.74 543.085v78.411H61.025v-78.41H371.74Z"/><path d="M197.632 748.257H61.025V400.316h58.115v276.012h78.492zM538.158 522.699c-29.28 29.255-64.717 43.896-106.326 43.896-22.923 0-44.59-4.321-65.01-12.986-20.444-8.688-38.303-21.01-53.593-36.98l44.316-43.26c21.848 21.053 47.935 31.564 78.272 31.564 24.646 0 45.312-8.527 61.983-25.59 16.697-17.039 25.048-38.16 25.048-63.344V126.98h78.491V415.99c0 40.73-21.08 76.293-63.181 106.7Z"/></svg>
             Claude
           </a>
-          <!-- Mobile Copy -->
-          <div class="sm:hidden">
+          <div class="sm:hidden flex items-center gap-1.5">
+            <button 
+              class="fav-btn flex items-center justify-center w-8 h-8 rounded-md border border-[var(--border)] text-[var(--text-secondary)] hover:text-rose-400 hover:bg-rose-400/10 transition-all group"
+              data-slug={entry.slug}
+              aria-label="Toggle favorite"
+            >
+              <svg class="fav-icon w-3.5 h-3.5 transition-colors group-[.active]:fill-rose-500 group-[.active]:stroke-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
             <CopyButton promptText={promptText} slug={entry.slug} fullWidth={false} />
           </div>
         </div>
