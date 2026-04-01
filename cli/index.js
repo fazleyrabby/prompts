@@ -2,6 +2,7 @@
 
 import Fuse from 'fuse.js';
 import enquirer from 'enquirer';
+const { AutoComplete } = enquirer;
 import { intro, outro, spinner, select, text, isCancel, cancel } from '@clack/prompts';
 import clipboardy from 'clipboardy';
 import pc from 'picocolors';
@@ -45,7 +46,7 @@ async function main() {
   while (stayInCli) {
     let promptChoice;
     try {
-      const prompt = new enquirer.Autocomplete({
+      const prompt = new AutoComplete({
         name: 'prompt',
         message: pc.cyan('Select a prompt (start typing to filter)'),
         limit: 10,
