@@ -28,7 +28,7 @@ async function fetchPrompts() {
 
 async function main() {
   console.clear();
-  intro(pc.bgBlue(pc.white(' 🚀 @fazleyrabbi/prompts CLI ')));
+  intro(pc.bgCyan(pc.black(' 🚀 @fazleyrabbi/prompts CLI ')));
 
   const allPrompts = await fetchPrompts();
 
@@ -53,7 +53,7 @@ async function main() {
         choices: allPrompts.map(p => ({
           name: p.title,
           message: p.title,
-          hint: pc.dim(`(${p.category})`)
+          hint: pc.gray(`(${p.category})`)
         })),
         async suggest(input, choices) {
           if (!input) return choices;
@@ -82,7 +82,7 @@ async function main() {
     
     if (promptChoice.variables && promptChoice.variables.length > 0) {
       outro(pc.cyan(`\nPrompt selected: ${pc.bold(promptChoice.title)}`));
-      console.log(pc.dim(`This prompt requires ${promptChoice.variables.length} variables:\n`));
+      console.log(pc.gray(`This prompt requires ${promptChoice.variables.length} variables:\n`));
       
       for (const variable of promptChoice.variables) {
         const varValue = await text({
@@ -93,7 +93,7 @@ async function main() {
 
         if (isCancel(varValue)) {
           console.clear();
-          intro(pc.bgBlue(pc.white(' 🚀 @fazleyrabbi/prompts CLI ')));
+          intro(pc.bgCyan(pc.black(' 🚀 @fazleyrabbi/prompts CLI ')));
           console.log(pc.yellow('↩ Went back to search.'));
           promptChoice = null;
           break;
@@ -110,9 +110,9 @@ async function main() {
     try {
       await clipboardy.write(finalPromptText);
       outro(pc.green('✨ Successfully copied to clipboard!'));
-      console.log(pc.dim('----------------------------------------'));
+      console.log(pc.gray('----------------------------------------'));
       console.log(pc.gray(finalPromptText.substring(0, 100) + (finalPromptText.length > 100 ? '...' : '')));
-      console.log(pc.dim('----------------------------------------\n'));
+      console.log(pc.gray('----------------------------------------\n'));
     } catch (err) {
       console.log('\nHere is your compiled prompt:\n\n' + finalPromptText);
     }
@@ -131,8 +131,8 @@ async function main() {
       outro(pc.yellow('Exiting... Thanks for using @fazleyrabbi/prompts!'));
     } else {
       console.clear();
-      intro(pc.bgBlue(pc.white(' 🚀 @fazleyrabbi/prompts CLI ')));
-      console.log(pc.dim(`Currently loaded: ${allPrompts.length} prompts\n`));
+      intro(pc.bgCyan(pc.black(' 🚀 @fazleyrabbi/prompts CLI ')));
+      console.log(pc.gray(`Currently loaded: ${allPrompts.length} prompts\n`));
     }
   }
 }
