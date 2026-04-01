@@ -1,20 +1,30 @@
 import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
+import { fileURLToPath } from 'url';
 
-/**
- * For 1k+ prompts, we should load titles first and lazy-load bodies
- * to ensure near-instant CLI start-up.
- */
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// This ensures we always find the prompts folder relative to the script
+const PROMPTS_DIR = path.resolve(__dirname, '../src/content/prompts');
+
 export async function loadPromptIndex() {
-  const promptsDir = path.resolve('../src/content/prompts');
-  if (!fs.existsSync(promptsDir)) return [];
+  if (!fs.existsSync(PROMPTS_DIR)) {
+    // Fallback search: check for root content if path above fails
+    const alternativeDir = path.resolve(process.cwd(), 'src/content/prompts');
+    if (fs.existsSync(alternativeDir)) return scanDir(alternativeDir);
+    return [];
+  }
   
-  const files = fs.readdirSync(promptsDir).filter(f => f.endsWith('.md'));
+  return scanDir(PROMPTS_DIR);
+}
+
+function scanDir(dir) {
+  const files = fs.readdirSync(dir).filter(f => f.endsWith('.md'));
   
-  // Quick-parse only the frontmatter for the index
-  const index = files.map(file => {
-    const fullPath = path.join(promptsDir, file);
+  return files.map(file => {
+    const fullPath = path.join(dir, file);
     const content = fs.readFileSync(fullPath, 'utf-8');
     
     const fmMatch = content.match(/^---\n([\s\S]+?)\n---/);
@@ -30,16 +40,19 @@ export async function loadPromptIndex() {
       title: meta.title || file.replace('.md', ''),
       category: meta.category || 'general',
       tags: meta.tags || [],
-      // We don't load the body yet to save memory/IO
     };
   });
-  
-  return index;
 }
 
 export async function loadPromptContent(filename) {
-  const promptsDir = path.resolve('../src/content/prompts');
-  const fullPath = path.join(promptsDir, filename);
+  // Use the same robust path logic
+  let targetDir = PROMPTS_DIR;
+  if (!fs.existsSync(PROMPTS_DIR)) {
+    const alternativeDir = path.resolve(process.cwd(), 'src/content/prompts');
+    if (fs.existsSync(alternativeDir)) targetDir = alternativeDir;
+  }
+
+  const fullPath = path.join(targetDir, filename);
   const content = fs.readFileSync(fullPath, 'utf-8');
   
   const fmMatch = content.match(/^---\n([\s\S]+?)\n---/);
