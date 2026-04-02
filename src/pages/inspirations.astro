@@ -1,0 +1,239 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Tag from '../components/Tag.astro';
+import CopyButton from '../components/CopyButton.astro';
+
+const inspirations = await getCollection('inspirations', ({data}) => !data.draft);
+const allCategories = [...new Set(inspirations.map(i => i.data.category))].sort();
+---
+
+<BaseLayout
+  title="UI Inspirations"
+  description="Curated UI inspirations paired with structured prompts you can copy and use instantly."
+>
+  <div class="max-w-[1400px] mx-auto">
+    <!-- Header -->
+    <header class="mb-8">
+      <nav class="flex items-center gap-2 text-xs font-mono mb-4 text-[var(--text-secondary)]">
+        <a href="/" class="hover:text-[var(--text-primary)] flex items-center gap-1.5 border border-[var(--border)] px-2 py-0.5 rounded-md hover:bg-[var(--surface)] transition-all">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-[var(--accent-start)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="4 17 10 11 4 5"></polyline>
+            <line x1="12" y1="19" x2="20" y2="19"></line>
+          </svg>
+          Library
+        </a>
+        <span class="opacity-30">/</span>
+        <span class="text-[var(--text-primary)]">Inspirations</span>
+      </nav>
+      <div class="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 class="text-3xl sm:text-4xl font-semibold font-heading text-[var(--text-primary)] tracking-tight mb-2">
+            UI Inspirations
+          </h1>
+          <p class="text-[var(--text-secondary)] text-lg font-body max-w-xl">
+            Curated designs from the best products — each paired with a structured prompt you can copy and use instantly.
+          </p>
+        </div>
+        <span class="text-sm text-[var(--text-secondary)] font-mono shrink-0 mt-2">
+          {inspirations.length} inspirations
+        </span>
+      </div>
+    </header>
+
+    <!-- AI Tool Disclaimer -->
+    <div class="mb-8 p-4 rounded-lg border border-[var(--border)] bg-[var(--surface)]/50 backdrop-blur-sm">
+      <div class="flex gap-3 items-start">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0 mt-0.5 text-[var(--accent-start)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div>
+          <p class="text-sm text-[var(--text-primary)] font-medium mb-1">Results vary by AI tool & model</p>
+          <p class="text-xs text-[var(--text-secondary)] leading-relaxed">
+            Not all AI tools produce the same output from these prompts.
+            <span class="text-[var(--text-primary)]">Google AI Studio</span>,
+            <span class="text-[var(--text-primary)]">Lovable</span>, and
+            <span class="text-[var(--text-primary)]">Claude Opus</span> tend to generate rich, detailed results closest to the inspirations shown here.
+            <span class="text-[var(--text-primary)]">Gemini</span> also produces nice output.
+            Others like <span class="text-[var(--text-primary)]">ChatGPT</span> and
+            <span class="text-[var(--text-primary)]">Codex</span> may give more minimal results.
+            Experiment with different tools to find what works best for your use case.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex flex-wrap items-center gap-2 mb-8">
+      <button
+        data-filter="all"
+        class="filter-btn active px-3 py-1.5 rounded-md text-xs font-medium border border-[var(--border)] transition-all"
+      >
+        All
+      </button>
+      {allCategories.map(cat => (
+        <button
+          data-filter={cat}
+          class="filter-btn px-3 py-1.5 rounded-md text-xs font-medium border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] transition-all capitalize"
+        >
+          {cat}
+        </button>
+      ))}
+    </div>
+
+    <!-- Grid -->
+    <div id="inspirationGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {inspirations.map((item, index) => {
+        // Extract the prompt section from the body
+        const rawBody = item.body || '';
+        const promptMatch = rawBody.split('## Prompt');
+        const promptText = promptMatch[1]?.trim() || '';
+
+        return (
+          <div
+            class="inspiration-card group relative flex flex-col overflow-hidden"
+            data-category={item.data.category}
+            data-tags={JSON.stringify(item.data.tags)}
+          >
+            <a href={`/inspiration/${item.slug}`} class="absolute inset-0 z-10">
+              <span class="sr-only">View {item.data.title}</span>
+            </a>
+
+            {/* Preview Image */}
+            <div class="w-full aspect-video bg-[var(--bg)] border-b border-[var(--border)] overflow-hidden shrink-0 relative">
+              {item.data.preview ? (
+                <img
+                  src={item.data.preview}
+                  alt={item.data.title}
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  width="640"
+                  height="360"
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <div class="w-full h-full flex items-center justify-center text-[var(--text-secondary)]">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+              )}
+              {/* Category badge */}
+              <span class="absolute top-3 left-3 px-2 py-0.5 bg-black/60 backdrop-blur-md rounded text-[9px] text-white/90 font-mono uppercase tracking-widest border border-white/10 pointer-events-none z-20">
+                {item.data.category}
+              </span>
+              {/* Generated with badge */}
+              {item.data.generatedWith && (
+                <span class="absolute bottom-3 right-3 px-2 py-0.5 bg-black/60 backdrop-blur-md rounded text-[9px] text-white/80 font-mono border border-white/10 pointer-events-none z-20 flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                  {item.data.generatedWith}
+                </span>
+              )}
+            </div>
+
+            {/* Card Content */}
+            <div class="p-5 flex flex-col flex-grow">
+              <h3 class="text-lg font-medium text-[var(--text-primary)] mb-1.5 font-heading line-clamp-1 pr-2">{item.data.title}</h3>
+              <p class="text-[var(--text-secondary)] text-sm line-clamp-2 mb-4">{item.data.description}</p>
+
+              {/* Tags */}
+              <div class="flex flex-wrap gap-2 mb-4 mt-auto">
+                {item.data.tags.slice(0, 3).map((tag: string) => (
+                  <span class="relative z-20">
+                    <Tag label={tag} />
+                  </span>
+                ))}
+                {item.data.tags.length > 3 && (
+                  <span class="px-2 py-0.5 text-[10px] font-mono rounded bg-transparent border border-[var(--border)] text-[var(--text-secondary)] flex items-center">
+                    +{item.data.tags.length - 3}
+                  </span>
+                )}
+              </div>
+
+              {/* Source & Copy */}
+              <div class="flex items-center justify-between gap-2 pt-3 border-t border-[var(--border)]/50">
+                <a
+                  href={item.data.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="relative z-20 flex items-center gap-1.5 text-[10px] font-mono text-[var(--text-secondary)] hover:text-[var(--accent-start)] transition-colors truncate"
+                  title={item.data.url}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                  <span class="truncate">{new URL(item.data.url).hostname}</span>
+                </a>
+                <div class="relative z-20 shrink-0">
+                  <CopyButton promptText={promptText} slug={item.slug} label="Copy Prompt" fullWidth={false} />
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+
+    {/* Empty state */}
+    <div id="emptyState" class="hidden text-center py-16">
+      <p class="text-[var(--text-secondary)] text-sm font-mono">No inspirations found for this filter.</p>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .inspiration-card {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    transition: all 160ms ease-out;
+  }
+  .inspiration-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.45);
+    border-color: var(--border-hover);
+  }
+
+  .filter-btn.active {
+    background-color: var(--surface);
+    color: var(--text-primary);
+    border-color: var(--border-hover);
+  }
+</style>
+
+<script>
+  function initFilters() {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const cards = document.querySelectorAll('.inspiration-card') as NodeListOf<HTMLElement>;
+    const emptyState = document.getElementById('emptyState');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Update active state
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const filter = btn.getAttribute('data-filter');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+          const category = card.getAttribute('data-category');
+          if (filter === 'all' || category === filter) {
+            card.style.display = '';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        if (emptyState) {
+          emptyState.classList.toggle('hidden', visibleCount > 0);
+        }
+      });
+    });
+  }
+
+  initFilters();
+  document.addEventListener('astro:page-load', initFilters);
+</script>
