@@ -3,6 +3,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 const changelog = [
   {
+    date: '2024-10-01',
+    version: 'v2.1.0',
+    title: 'Draft Support & Inspiration Publishing',
+    changes: [
+      { type: 'feature', text: 'Added draft field to content schema with Zod validation' },
+      { type: 'feature', text: 'Draft filtering in inspiration lists and related sections (!data.draft)' },
+      { type: 'content', text: 'Published Stripe Landing Hero inspiration (now 6 total)' },
+      { type: 'improvement', text: 'Robust getCollection filtering excludes drafts automatically' },
+    ]
+  },
+  {
     date: '2026-04-01',
     version: 'v2.0.0',
     title: 'CLI Dashboard Overhaul (Ink TUI)',
@@ -168,6 +179,7 @@ const typeConfig: Record<string, { label: string; color: string; bg: string }> =
               </time>
             </div>
 
+            <!-- Release header -->
             <h2 class="text-xl font-semibold font-heading text-[var(--text-primary)] mb-4 tracking-tight">
               {release.title}
             </h2>
