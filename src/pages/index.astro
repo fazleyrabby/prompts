@@ -179,7 +179,7 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
               {prompts.length} prompts
             </span>
 
-            <div class="relative flex items-center gap-1 px-1.5 py-1 sm:px-2.5 sm:py-1.5 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[10px] sm:text-[11px] font-medium text-[var(--text-secondary)] hover:border-[var(--border-hover)] hover:bg-[var(--surface-hover)] transition-all cursor-pointer group">
+            <div class="relative flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[10px] sm:text-[11px] font-medium text-[var(--text-secondary)] hover:border-[var(--border-hover)] hover:bg-[var(--surface-hover)] transition-all cursor-pointer group h-8">
               <span class="hidden sm:inline-block opacity-60 uppercase tracking-tight">Show:</span>
               <span id="pageSizeDisplay" class="text-[var(--text-primary)] font-bold">12</span>
               <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-3.5 sm:w-3.5 opacity-40 group-hover:opacity-100 transition-opacity" viewBox="0 0 20 20" fill="currentColor">
@@ -196,7 +196,7 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
 
             <button 
               id="openSearchHeader"
-              class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] transition-all group"
+              class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] transition-all group h-8"
               aria-label="Open Search"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -210,7 +210,7 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
 
             <a
               href="/inspirations"
-              class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] transition-all"
+              class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] transition-all h-8"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-[var(--accent-end)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
@@ -222,7 +222,7 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
               href="https://github.com/fazleyrabby/prompts.git"
               target="_blank"
               rel="noopener noreferrer"
-              class="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] transition-all"
+              class="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] transition-all shrink-0"
               aria-label="GitHub Repository"
             >
               <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -234,7 +234,7 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
               href="https://www.npmjs.com/package/@fazleyrabbi/prompts" 
               target="_blank" 
               rel="noopener noreferrer" 
-              class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] transition-all"
+              class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] transition-all h-8"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-[var(--accent-start)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -641,6 +641,15 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
     window.history.replaceState({}, '', newURL);
   }
 
+  function shuffleArray<T>(arr: T[]): T[] {
+    const shuffled = [...arr];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }
+
   function filterPrompts(shouldResetPage = true) {
     if (shouldResetPage) currentPage = 1;
     filteredCards = [];
@@ -672,6 +681,12 @@ const allTags = [...new Set(prompts.flatMap(p => p.data.tags || []))].sort();
         filteredCards.push(el);
       }
     });
+
+    // Shuffle on initial load when no filters are active
+    const isFiltered = activeCategory !== 'all' || activeTags.length > 0 || searchQuery !== '' || showFavoritesOnly;
+    if (!isFiltered && shouldResetPage) {
+      filteredCards = shuffleArray(filteredCards);
+    }
 
     if (filteredCards.length === 0) {
       noResults?.classList.remove('hidden');
