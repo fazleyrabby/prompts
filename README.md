@@ -4,13 +4,17 @@
 
 **A curated collection of ready-to-use AI prompts for developers and designers.**
 
-[Browse Prompts](https://prompts.fazleyrabbi.xyz) · [Changelog](https://prompts.fazleyrabbi.xyz/changelog)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub stars](https://img.shields.io/github/stars/fazleyrabby/prompts?style=flat)](https://github.com/fazleyrabby/prompts/stargazers)
+[![CLI on npm](https://img.shields.io/npm/v/@fazleyrabbi/prompts?label=cli&color=cb3837)](https://www.npmjs.com/package/@fazleyrabbi/prompts)
 
-<img width="3144" height="1794" alt="CleanShot 2026-04-01 at 17 16 33@2x" src="https://github.com/user-attachments/assets/1b4804b0-3130-42c4-8690-4ff1ae8c3d55" />
+[Browse Prompts](https://prompts.fazleyrabbi.xyz) · [CLI (NPM)](https://www.npmjs.com/package/@fazleyrabbi/prompts) · [Changelog](https://prompts.fazleyrabbi.xyz/changelog) · [Inspirations](https://prompts.fazleyrabbi.xyz/inspirations)
 
-CLI Preview
-<img width="1962" height="1168" alt="CleanShot 2026-04-01 at 17 17 50@2x" src="https://github.com/user-attachments/assets/76a8d536-af78-41f1-a16f-4914715be64f" />
+<img width="3144" height="1794" alt="Prompt Library Web" src="https://github.com/user-attachments/assets/1b4804b0-3130-42c4-8690-4ff1ae8c3d55" />
 
+### CLI Preview
+
+<img width="1962" height="1168" alt="Prompt Library CLI" src="https://github.com/user-attachments/assets/76a8d536-af78-41f1-a16f-4914715be64f" />
 
 </div>
 
@@ -18,7 +22,7 @@ CLI Preview
 
 ## What is this?
 
-Prompt Library is a searchable collection of **33+ prompts** for building UI components, layouts, dashboards, and more with AI tools like Claude and ChatGPT.
+Prompt Library is a searchable collection of **48+ prompts** for building UI components, layouts, dashboards, and more with AI tools like Claude and ChatGPT.
 
 Instead of digging through scattered notes or bookmarks every time you need a prompt, this puts everything in one place — organized by category, searchable, and ready to copy with a single click.
 
@@ -27,6 +31,31 @@ Instead of digging through scattered notes or bookmarks every time you need a pr
 - **Developers** who use AI assistants daily and want a reliable prompt starting point
 - **Designers** looking for structured prompts to generate UI components
 - **Anyone** tired of rewriting the same instructions from scratch
+
+---
+
+## Features
+
+- **Searchable library** — find prompts by title, tags, or AI model
+- **Category & tag filtering** — narrow down to exactly what you need
+- **One-click copy** — grab any prompt instantly
+- **Favorites system** — bookmark your go-to prompts with localStorage persistence
+- **Most Used section** — your frequently used prompts surface automatically
+- **Dark mode** — easy on the eyes, always
+- **CLI access** — browse and copy prompts right from your terminal
+- **Keyboard shortcuts** — `⌘K` to search, `Esc` to clear, `←→` for pagination
+
+---
+
+## CLI
+
+Use the prompt library directly from your terminal:
+
+```bash
+npx @fazleyrabbi/prompts
+```
+
+Browse, search, and copy prompts without leaving your terminal.
 
 ---
 
